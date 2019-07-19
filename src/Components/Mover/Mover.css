@@ -1,0 +1,6 @@
+.mover {
+    width: 25px;
+    height: 25px;
+    background-color: rgb(0,0,255);
+    position: fixed;
+}
