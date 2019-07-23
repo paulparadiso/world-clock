@@ -7,47 +7,72 @@ class Mover extends React.Component {
         super();
         //window.setInterval(this.move, 1000);
         window.requestAnimationFrame(this.update);
+        let nextState = {...this.state};
+        nextState.startTime = window.performance.now();
+        this.setState(nextState);
     }
 
     state = {
         animating: true,
+        accel: 0.1,
+        maxAccel: 0.01,
+        vel: 0.0,
         startTime: 0,
         startVal: 0,
         endVal: 300,
-        runTime: 5.0,
-        styles: {
-            left: 100
-        }
+        runTime: 5000.0,
+        position: 0
+    }
+
+    createMovement = () => {
+        let nextState = {...this.state};
+        nextState.endVal = Math.random() * 500.0;
+        nextState.accel = 0.01;
+        nextState.vel = 0.0;
+        nextState.startVal = nextState.position;
+        this.setState(nextState);
     }
 
     render () {
 
-        const { styles } = this.state;
+        const styles = {'left': this.state.position };
 
         return (
-            <div className="mover" style={styles}>
+            <div className="mover" style={ styles }>
                 
             </div>
         )
     }
 
     update = timestamp => {
-        console.log(`${timestamp}`)
+        //console.log(`${timestamp}`)
+        //if(this.state.accel > 0.0) {
+        let nextState = {...this.state};
+        let dist = Math.abs(nextState.position - this.state.endVal);
+        let travel = Math.abs(nextState.endVal - nextState.startVal);
+        let damp = dist / travel;
+        
+        nextState.vel = this.state.vel + this.state.accel;
+        nextState.position = this.state.position + (nextState.vel * damp);
+        //console.log(`${nextState.position} ${dist} ${travel} ${damp} ${nextState.accel}`)
+        //console.log(dist);
+        this.setState(nextState);
+        //}
+        /*
         if(this.state.animating) {
             if(timestamp > (this.state.startTime + this.state.runTime)){
-                //let nextState = {...this.state};
-                let nextState = Object.assign({}, this.state);
-                nextState.styles.left = nextState.endVal;
+                let nextState = {...this.state};
                 nextState.animating = false;
+                nextState.position = nextState.endVal
                 this.setState(nextState);
             } else {
-                //let nextState = {...this.state};
-                let nextState = Object.assign({}, this.state);
+                let nextState = {...this.state};
                 let timePct = (timestamp - this.state.startTime) / this.state.runTime;
-                nextState.styles.left = nextState.startVal + ((nextState.endVal - nextState.startVal) * timePct);
+                nextState.position = nextState.startVal + ((nextState.endVal - nextState.startVal) * timePct);
                 this.setState(nextState);
             }
         }
+        */
         requestAnimationFrame(this.update);
     }
 
