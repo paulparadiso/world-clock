@@ -1,0 +1,15 @@
+.Gear{
+    border: 1px solid black;
+}
+
+.Gear-SVG {
+    fill: lime;
+}
+
+.MainShape {
+    fill: rgba(0,255,255, 0.5);
+}
+
+.Clock-Text {
+    color: white;
+}
