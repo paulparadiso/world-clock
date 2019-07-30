@@ -77,7 +77,10 @@ class Clock extends React.Component {
     render() {
 
         return(
-            <Gear label="minutes" texts={minutes} width="400"></Gear>    
+            <div className="Clock">
+                <Gear label="minutes" texts={minutes} width="400" x="1600" y="540">
+                </Gear>    
+            </div>
         )
     
     }

@@ -12,8 +12,13 @@ class Gear extends React.Component {
             texts: props.texts,
             width: props.width,
             height: height,
+            x: props.x,
+            y: props.y,
+            rotation: 0,
+            radius: 500,
             currentText: 0
         };
+        window.setInterval(this.setRotation.bind(this), 10);
     }
 
     generatePath(width, height) {
@@ -33,10 +38,10 @@ class Gear extends React.Component {
     }
 
     generateCircle() {
-        let cx = 100;
-        let cy = 100;
+        let cx = this.state.radius;
+        let cy = this.state.radius;
         let paths = []
-        let radius = 90;
+        let radius = this.state.radius;
         let svgPath = `M${cx} ${cy}`;
         for(let i = 0; i < 5; i++) {
             let currentPosition = i / 10.0;
@@ -47,18 +52,29 @@ class Gear extends React.Component {
             }
             svgPath += `A${radius} ${radius} 0 0 0 ${Math.floor(x)} ${Math.floor(y)}`;
         }
-        svgPath += `L${cx} L${cy} Z`;
+        svgPath += `L${cx} ${cy} Z`;
         console.log(svgPath);
         return svgPath;
     }
 
     generateLine() {
-        let cx = 100;
-        let cy = 100;
-        let radius = 90;
+        let cx = this.state.radius;
+        let cy = this.state.radius;
+        let radius = this.state.radius;
         let x = cx + (radius * Math.cos(2*Math.PI * 0.5));
         let y = cy + (radius * Math.sin(2*Math.PI * 0.5));
         return `M${cx} ${cy} L${x} ${y}`;
+    }
+
+    generateRotation() {
+        const r = this.state.rotation;
+        return `rotate(${r}, ${this.state.radius}, ${this.state.radius})`;
+    }
+
+    setRotation() {
+        const nextState = {...this.state};
+        nextState.rotation = (this.state.rotation + 1) % 360;
+        this.setState(nextState);
     }
 
     render() {
@@ -85,13 +101,11 @@ class Gear extends React.Component {
         console.log(paths);
         return (
             <div className="Gear">
-                <svg width={width} height={height}>
-                    <path d={this.generatePath(width, height)} className="MainShape"/>
-                    {paths}
-                </svg>
-                <svg width="300" height="300" fill="red">
-                    <path d={this.generateCircle()}/>
-                    <path d={this.generateLine()} stroke="blue"/>
+                <svg width={this.state.radius * 2} height={this.state.radius * 2} fill="red" x={this.state.x}>
+                    <g transform={this.generateRotation()}>
+                        <path d={this.generateCircle()}/>
+                        <path d={this.generateLine()} stroke="blue"/>
+                    </g>
                 </svg>
             </div>
         )

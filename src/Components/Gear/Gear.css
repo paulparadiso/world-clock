@@ -1,5 +1,8 @@
-.Gear{
-    border: 1px solid black;
+
+.Gear {
+    position: absolute;
+    width: 100%;
+    height: 100%
 }
 
 .Gear-SVG {
