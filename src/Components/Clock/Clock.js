@@ -78,8 +78,22 @@ class Clock extends React.Component {
 
         return(
             <div className="Clock">
-                <Gear label="minutes" texts={minutes} width="400" x="1600" y="540">
-                </Gear>    
+                
+                <Gear label="cities" texts={cities} width="1920" x="2060" y="548" radius="1842" limit="0.25">
+                </Gear>
+                
+                <Gear label="hours" texts={hours} width="1920" x="2060" y="540" radius="1257" limit="0.16">
+                </Gear>
+                
+                <Gear label="minutes" texts={minutes} width="1920" x="2060" y="540" radius="1042" limit="0.7">
+                </Gear>
+                
+                
+                <Gear label="seconds" texts={seconds} width="1920" x="2060" y="540" radius="807" limit="0.75">
+                </Gear>
+
+                 <Gear label="ampm" texts={ampm} width="1920" x="2060" y="540" radius="642" limit="0.1">
+                </Gear> 
             </div>
         )
     

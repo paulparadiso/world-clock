@@ -1,5 +1,6 @@
 import React from 'react';
 import './Gear.css';
+import { isFor, thisTypeAnnotation } from '@babel/types';
 
 class Gear extends React.Component {
 
@@ -9,16 +10,24 @@ class Gear extends React.Component {
         this.state = {
             label: props.label,
             texts: props.texts,
-            width: props.width,
-            height: height,
-            spacing: props.spacing, 
-            x: props.x,
-            y: props.y,
+            width: 1920,
+            height: 1080,
+            spacing: 2, 
+            limit: props.limit,
+            textPaths: [],
+            x: parseInt(props.x),
+            y: parseInt(props.y),
             rotation: 0,
-            radius: 500,
-            currentText: 0
+            radius: parseInt(props.radius),
+            currentText: 0,
+            lastChange: 0
         };
-        //window.setInterval(this.setRotation.bind(this), 10);
+        console.log(this.state);
+        window.setInterval(() => this.setRotation(), 1000);
+    }
+
+    componentDidMount() {
+        this.generate();
     }
 
     generatePath(width, height) {
@@ -38,41 +47,56 @@ class Gear extends React.Component {
     }
 
     generate() {
-        let cx = this.state.radius;
-        let cy = this.state.radius;
+        let cx = this.state.x;
+        let cy = this.state.y;
         let paths = []
         let radius = this.state.radius;
-        let cirlcePath = `M${cx} ${cy}`;
+        let circlePath = `M${cx} ${cy}`;
         let segments = [];
-        for(let i = 0; i < this.state.texts.length; i++) {
-            let currentPosition = i / 360.0;
-            let x = cx + (radius * Math.cos(2*Math.PI * (0.5 - currentPosition)));
-            let y = cy + (radius * Math.sin(2*Math.PI * (0.5 - currentPosition)));
+        let steps = this.state.texts.length + 1;
+        let max = steps * this.state.spacing;
+        for(let i = 0; i < this.state.texts.length + 2; i++) {
+            console.log(radius);
+            let currentPosition = ((i * this.state.spacing) / max) * this.state.limit; 
+            let angle = 2 * Math.PI * (0.5 - currentPosition);
+            let x = cx + (radius * Math.cos(angle));
+            let y = cy + (radius * Math.sin(angle));
+            let tx = cx + ((radius * 0.98) * Math.cos(angle));
+            let ty = cy + ((radius * 0.98) * Math.sin(angle));
             if(i == 0){
-                cirlcePath += `L${Math.floor(x)} ${Math.floor(y)}`;
+                circlePath += `L${Math.floor(x)} ${Math.floor(y)}`;
             }
-            let segmentPath = `M${x} ${y} L${cx} ${cy}`
             circlePath += `A${radius} ${radius} 0 0 0 ${Math.floor(x)} ${Math.floor(y)}`;
-            segments.push({'index': i, 'text': this.state.texts[i], path: segmentPath})
+            if(i > 0 && i < this.state.texts.length + 1) {
+                let segmentPath = `M${Math.floor(tx)} ${Math.floor(ty)} L${cx} ${cy}`
+                console.log(segmentPath);
+                segments.push({'index': i -1, 
+                               'text': this.state.texts[i -1], 
+                               path: segmentPath,
+                               angle: currentPosition * 360})
+            }
         }
         circlePath += `L${cx} ${cy} Z`;
         let nextState = {...this.state};
         nextState.circlePath = circlePath;
-        nextState.textPaths = segments;
+        nextState.textPaths = [...segments];
         this.setState(nextState);
     }
 
     generateCircle() {
-        let cx = this.state.radius;
-        let cy = this.state.radius;
+        let cx = this.state.x;
+        let cy = this.state.y;
         let paths = []
         let radius = this.state.radius;
         let svgPath = `M${cx} ${cy}`;
         let segments = [];
+        let steps = this.state.texts.length + 1;
+        let max = steps * this.state.spacing;
         for(let i = 0; i < this.state.texts.length; i++) {
-            let currentPosition = i / 360.0;
-            let x = cx + (radius * Math.cos(2*Math.PI * (0.5 - currentPosition)));
-            let y = cy + (radius * Math.sin(2*Math.PI * (0.5 - currentPosition)));
+            let currentPosition = ((i * this.state.spacing) / max) * this.state.limit;
+            let angle = 2 * Math.PI * (0.5 - currentPosition);
+            let x = cx + (radius * Math.cos(angle));
+            let y = cy + (radius * Math.sin(angle));
             if(i == 0){
                 svgPath += `L${Math.floor(x)} ${Math.floor(y)}`;
             }
@@ -93,42 +117,75 @@ class Gear extends React.Component {
     }
 
     generateRotation() {
-        const r = this.state.rotation;
-        return `rotate(${r}, ${this.state.radius}, ${this.state.radius})`;
+        let r = this.state.rotation;
+        return `rotate(${(r)}, ${this.state.x}, ${this.state.y})`;
     }
 
     setRotation() {
-        const nextState = {...this.state};
-        nextState.rotation = (this.state.rotation + 1) % 360;
-        this.setState(nextState);
+        let nextState = {...this.state};
+        let date = new Date();
+        let index = 0;
+        if(this.state.label == 'seconds'){
+            index = date.getSeconds();
+            nextState.currentText = index;
+        }
+        if(this.state.label == 'minutes'){
+            index = date.getMinutes();
+            nextState.currentText = index;
+        }
+        if(this.state.label == 'hours'){
+            index = date.getHours() - 1;
+            if( index > 12) {
+                index = index - 13;
+            }
+            nextState.currentText = index;
+        }
+        if(this.state.label == 'cities') {
+             let seconds = date.getSeconds();
+             if(seconds % 5 == 0){
+                 if(nextState.lastChange != seconds){
+                    nextState.currentText = (nextState.currentText + 1) % this.state.texts.length;
+                    index = nextState.currentText;
+                    nextState.lastChange = seconds;
+                }
+             } else {
+                 return;
+             }
+        }
+        if(this.state.textPaths.length > 0) {
+            let r = this.state.textPaths[index].angle;
+            nextState.rotation = r;
+            //console.log(`Setting rotation to ${r}`)
+            this.setState(nextState);
+        }
     }
 
     render() {
-
         let width = this.state.width;
         let height = this.state.height;
         let count = 0;
         const paths = [] 
-        this.generate();
-        this.state.textPaths.map( (item) => (
-            paths.push(
-                <React.Fragment key={item['index']}>
-                    <path id={`textpath-${item['index']}`} d={item['path']} />
-                    <text className="Clock-Text">
-                        <textPath href={`#textpath-${item['index']}`}>
-                            {item['text']}
-                        </textPath>
-                    </text>
-                </React.Fragment>
-            )
-        );
+        //paths.push(<React.Fragment key="1">);
+        //paths.push(</React.Fragment>);
         return (
             <div className="Gear">
-                <svg width={this.state.radius * 2} height={this.state.radius * 2} fill="red" x={this.state.x}>
+                <svg width="1920" height="1080" fill="white" stroke="black">
                     <g transform={this.generateRotation()}>
                         <path d={this.state.circlePath}/>
-                        <path d={this.generateLine()} stroke="blue"/>
-                        {paths}
+                        {
+                            this.state.textPaths.map((item, index) => (
+                                <React.Fragment key={`${this.state.label}-${index}`}>
+                                <defs>
+                                    <path id={`${this.state.label}-textpath-${item['index']}`} d={item['path']} stroke="blue"/>
+                                </defs>
+                                <text className={`Clock-Text ${this.state.currentText == index ? 'Clock-Text-Big': ''}`} fill="black">
+                                    <textPath href={`#${this.state.label}-textpath-${item['index']}`}>
+                                       {`${item['text']}`}
+                                    </textPath>
+                                </text>
+                                </React.Fragment>
+                            ))
+                        }
                     </g>
                 </svg>
             </div>

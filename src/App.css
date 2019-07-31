@@ -1,4 +1,18 @@
+
+
+@font-face {
+  font-family: amplitude;
+  src: url('fonts/Amplitude-Regular.otf');
+}
+
+@font-face {
+  font-family: celeste;
+  src: url('fonts/CelesReg.afm');
+}
+
+
 .App {
+  /*background-color: #333333;*/
 }
 
 .App-logo {

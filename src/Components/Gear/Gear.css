@@ -10,9 +10,24 @@
 }
 
 .MainShape {
-    fill: rgba(0,255,255, 0.5);
+    fill: rgb(0,255,255);
+    fill-opacity: 0.25;
 }
 
 .Clock-Text {
     color: white;
+    font-family: amplitude;
+    font-weight: bold;
+    stroke: black;
+    fill: black;
+    font-size: 35px;
+}
+
+.Clock-Text-Big {
+    font-size: 70px;
+    fill: black;
+}
+
+.TextPath {
+    stroke: green;
 }
