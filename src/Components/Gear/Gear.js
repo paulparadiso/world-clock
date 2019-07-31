@@ -5,20 +5,20 @@ class Gear extends React.Component {
 
     constructor(props) {
         super(props)
-        console.log(props);
         let height = props.texts.length * 20 + 40;
         this.state = {
             label: props.label,
             texts: props.texts,
             width: props.width,
             height: height,
+            spacing: props.spacing, 
             x: props.x,
             y: props.y,
             rotation: 0,
             radius: 500,
             currentText: 0
         };
-        window.setInterval(this.setRotation.bind(this), 10);
+        //window.setInterval(this.setRotation.bind(this), 10);
     }
 
     generatePath(width, height) {
@@ -37,14 +37,40 @@ class Gear extends React.Component {
         return `#textpath-${key}`;
     }
 
+    generate() {
+        let cx = this.state.radius;
+        let cy = this.state.radius;
+        let paths = []
+        let radius = this.state.radius;
+        let cirlcePath = `M${cx} ${cy}`;
+        let segments = [];
+        for(let i = 0; i < this.state.texts.length; i++) {
+            let currentPosition = i / 360.0;
+            let x = cx + (radius * Math.cos(2*Math.PI * (0.5 - currentPosition)));
+            let y = cy + (radius * Math.sin(2*Math.PI * (0.5 - currentPosition)));
+            if(i == 0){
+                cirlcePath += `L${Math.floor(x)} ${Math.floor(y)}`;
+            }
+            let segmentPath = `M${x} ${y} L${cx} ${cy}`
+            circlePath += `A${radius} ${radius} 0 0 0 ${Math.floor(x)} ${Math.floor(y)}`;
+            segments.push({'index': i, 'text': this.state.texts[i], path: segmentPath})
+        }
+        circlePath += `L${cx} ${cy} Z`;
+        let nextState = {...this.state};
+        nextState.circlePath = circlePath;
+        nextState.textPaths = segments;
+        this.setState(nextState);
+    }
+
     generateCircle() {
         let cx = this.state.radius;
         let cy = this.state.radius;
         let paths = []
         let radius = this.state.radius;
         let svgPath = `M${cx} ${cy}`;
-        for(let i = 0; i < 5; i++) {
-            let currentPosition = i / 10.0;
+        let segments = [];
+        for(let i = 0; i < this.state.texts.length; i++) {
+            let currentPosition = i / 360.0;
             let x = cx + (radius * Math.cos(2*Math.PI * (0.5 - currentPosition)));
             let y = cy + (radius * Math.sin(2*Math.PI * (0.5 - currentPosition)));
             if(i == 0){
@@ -81,30 +107,28 @@ class Gear extends React.Component {
 
         let width = this.state.width;
         let height = this.state.height;
-        this.state.texts.map( (item, key) => {
-            console.log(`${item} | ${key}`)
-        })
         let count = 0;
         const paths = [] 
-        this.state.texts.map( (item) => (
+        this.generate();
+        this.state.textPaths.map( (item) => (
             paths.push(
-            <React.Fragment key={count}>
-                <path id={this.generateTextPathID(count)} d={this.generateTextPath(count)}/>
-                <text className="Clock-Text">
-                    <textPath href={this.getTextPathID(count++)}>
-                        {item}
-                    </textPath>
-                </text>
-            </React.Fragment>
+                <React.Fragment key={item['index']}>
+                    <path id={`textpath-${item['index']}`} d={item['path']} />
+                    <text className="Clock-Text">
+                        <textPath href={`#textpath-${item['index']}`}>
+                            {item['text']}
+                        </textPath>
+                    </text>
+                </React.Fragment>
             )
-        ));
-        console.log(paths);
+        );
         return (
             <div className="Gear">
                 <svg width={this.state.radius * 2} height={this.state.radius * 2} fill="red" x={this.state.x}>
                     <g transform={this.generateRotation()}>
-                        <path d={this.generateCircle()}/>
+                        <path d={this.state.circlePath}/>
                         <path d={this.generateLine()} stroke="blue"/>
+                        {paths}
                     </g>
                 </svg>
             </div>
