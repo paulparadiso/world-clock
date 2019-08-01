@@ -18,14 +18,24 @@
     color: white;
     font-family: amplitude;
     font-weight: bold;
+    stroke: white;
+    fill: white;
+    font-size: 35px;
+    opacity: 0.5;
+}
+
+.Clock-Text-Shadow {
+    font-family: amplitude;
+    font-weight: bold;
     stroke: black;
     fill: black;
     font-size: 35px;
+    opacity: 0.5;
 }
 
 .Clock-Text-Big {
     font-size: 70px;
-    fill: black;
+    opacity: 1.0;
 }
 
 .TextPath {
