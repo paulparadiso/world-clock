@@ -52,11 +52,14 @@ class Gear extends React.Component {
         let circlePath = `M${cx} ${cy}`;
         let segments = [];
         let steps = this.state.texts.length + 1;
-        let max = steps * this.state.spacing;
+        //let max = steps * this.state.spacing;
+        let max = steps * 4;
         for(let i = 0; i < this.state.texts.length + 2; i++) {
             console.log(radius);
-            let currentPosition = ((i * this.state.spacing) / max) * this.state.limit; 
+            //let currentPosition = ((i * this.state.spacing) / max) * this.state.limit; 
+            let currentPosition = ((i * 4) / 360.0) 
             let angle = 2 * Math.PI * (0.5 - currentPosition);
+            //let angle = (2 * Math.PI) / 360.0 * 4 * i
             let x = cx + (radius * Math.cos(angle));
             let y = cy + (radius * Math.sin(angle));
             let tx = cx + ((radius * 0.98) * Math.cos(angle));
@@ -131,8 +134,8 @@ class Gear extends React.Component {
         }
         if(this.state.label === 'hours'){
             index = date.getHours() - 1;
-            if( index > 12) {
-                index = index - 13;
+            if( index > 11) {
+                index = index - 11;
             }
             nextState.currentText = index;
         }
@@ -149,7 +152,7 @@ class Gear extends React.Component {
              }
         }
         if(this.state.textPaths.length > 0) {
-            console.log(index);
+            console.log(`label=${this.state.label} index = ${index}`);
             let r = this.state.textPaths[index].angle;
             nextState.rotation = r;
             //console.log(`Setting rotation to ${r}`)
