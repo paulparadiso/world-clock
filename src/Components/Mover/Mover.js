@@ -7,21 +7,21 @@ class Mover extends React.Component {
         super();
         //window.setInterval(this.move, 1000);
         window.requestAnimationFrame(this.update);
-        let nextState = {...this.state};
-        nextState.startTime = window.performance.now();
-        this.setState(nextState);
+        window.setTimeout(this.setEndVal, 1000);
     }
 
-    state = {
+    state =  {
         animating: true,
         accel: 0.1,
         maxAccel: 0.01,
         vel: 0.0,
         startTime: 0,
         startVal: 0,
-        endVal: 300,
+        endVal: 0,
         runTime: 5000.0,
-        position: 0
+        position: 0,
+        displayPosition: 200,
+        overShoot: 200
     }
 
     createMovement = () => {
@@ -35,7 +35,7 @@ class Mover extends React.Component {
 
     render () {
 
-        const styles = {'left': this.state.position };
+        const styles = {'left': this.state.displayPosition };
 
         return (
             <div className="mover" style={ styles }>
@@ -45,35 +45,39 @@ class Mover extends React.Component {
     }
 
     update = timestamp => {
-        //console.log(`${timestamp}`)
-        //if(this.state.accel > 0.0) {
         let nextState = {...this.state};
+        if(Math.abs(nextState.position - nextState.endVal) < 0.01){
+            nextState.displayPosition = nextState.position + (Math.sin(timestamp % 360.0 / 1000.0) * nextState.overShoot)
+            console.log(`DisplayPosition = ${nextState.displayPosition}`);
+            this.setState(nextState);
+            requestAnimationFrame(this.update);
+            return;
+        }
         let dist = Math.abs(nextState.position - this.state.endVal);
         let travel = Math.abs(nextState.endVal - nextState.startVal);
         let damp = dist / travel;
-        
         nextState.vel = this.state.vel + this.state.accel;
         nextState.position = this.state.position + (nextState.vel * damp);
-        //console.log(`${nextState.position} ${dist} ${travel} ${damp} ${nextState.accel}`)
-        //console.log(dist);
+        nextState.displayPosition = nextState.position;
         this.setState(nextState);
-        //}
-        /*
-        if(this.state.animating) {
-            if(timestamp > (this.state.startTime + this.state.runTime)){
-                let nextState = {...this.state};
-                nextState.animating = false;
-                nextState.position = nextState.endVal
-                this.setState(nextState);
-            } else {
-                let nextState = {...this.state};
-                let timePct = (timestamp - this.state.startTime) / this.state.runTime;
-                nextState.position = nextState.startVal + ((nextState.endVal - nextState.startVal) * timePct);
-                this.setState(nextState);
-            }
-        }
-        */
         requestAnimationFrame(this.update);
+    }
+
+    setEndVal = () => {
+        let nextState = {...this.state};
+        nextState.endVal = Math.random() * 1000.0;
+        var diff = nextState.position - nextState.endVal;
+        if(diff > 0.0) {
+            nextState.accel = -0.02;
+        } else {
+            nextState.accel = 0.02;
+        }
+        nextState.vel = 0.0;
+        console.log(`Setting accel to ${nextState.accel}.`);
+        console.log(`Setting endVal to ${nextState.endVal}`)
+        this.setState(nextState);
+        requestAnimationFrame(this.update);
+        window.setTimeout(this.setEndVal, 15000);
     }
 
     move = () => {
