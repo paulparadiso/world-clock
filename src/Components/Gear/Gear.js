@@ -15,17 +15,34 @@ class Gear extends React.Component {
             limit: props.limit,
             textPaths: [],
             x: parseInt(props.x),
+            xVertical: parseInt(props.xVertical),
             y: parseInt(props.y),
+            yVertical: parseInt(props.yVertical),
             rotation: 0,
             radius: parseInt(props.radius),
+            radiusVertical: parseInt(props.radiusVertical),
+            renderModeHorizonal: this.shouldRenderHorizontal(),
             currentText: 0,
             lastChange: 0
         };
-        console.log(this.state);
+        //console.log(this.state);
         window.setInterval(() => this.setRotation(), 1000);
     }
 
+    dimensionsChanged() {
+        let nextState = {...this.state};
+        nextState.renderModeHorizonal = this.shouldRenderHorizontal();
+        this.setState(nextState);
+        this.generate();
+    }
+
+    shouldRenderHorizontal() {
+        let bHorizontal = window.innerWidth > window.innerHeight ? true: false;
+        return bHorizontal;
+    }
+
     componentDidMount() {
+        window.addEventListener("resize", this.dimensionsChanged.bind(this));
         this.generate();
     }
 
@@ -46,16 +63,16 @@ class Gear extends React.Component {
     }
 
     generate() {
-        let cx = this.state.x;
-        let cy = this.state.y;
-        let radius = this.state.radius;
+        let cx = this.state.renderModeHorizonal? this.state.x: this.state.xVertical;
+        let cy = this.state.renderModeHorizonal? this.state.y: this.state.yVertical;
+        let radius = this.state.renderModeHorizonal? this.state.radius: this.state.radiusVertical;
         let circlePath = `M${cx} ${cy}`;
         let segments = [];
         let steps = this.state.texts.length + 1;
         //let max = steps * this.state.spacing;
         let max = steps * 4;
         for(let i = 0; i < this.state.texts.length + 2; i++) {
-            console.log(radius);
+            //console.log(radius);
             //let currentPosition = ((i * this.state.spacing) / max) * this.state.limit; 
             let currentPosition = ((i * 4) / 360.0) 
             let angle = 2 * Math.PI * (0.5 - currentPosition);
@@ -70,7 +87,7 @@ class Gear extends React.Component {
             circlePath += `A${radius} ${radius} 0 0 0 ${Math.floor(x)} ${Math.floor(y)}`;
             if(i > 0 && i < this.state.texts.length + 1) {
                 let segmentPath = `M${Math.floor(tx)} ${Math.floor(ty)} L${cx} ${cy}`
-                console.log(segmentPath);
+                //console.log(segmentPath);
                 segments.push({'index': i -1, 
                                'text': this.state.texts[i -1], 
                                path: segmentPath,
@@ -85,8 +102,8 @@ class Gear extends React.Component {
     }
 
     generateCircle() {
-        let cx = this.state.x;
-        let cy = this.state.y;
+        let cx = this.state.renderModeHorizonal? this.state.x: this.state.xVertical;
+        let cy = this.state.renderModeHorizonal? this.state.y: this.state.yVertical;
         let radius = this.state.radius;
         let svgPath = `M${cx} ${cy}`;
         let steps = this.state.texts.length + 1;
@@ -102,7 +119,7 @@ class Gear extends React.Component {
             svgPath += `A${radius} ${radius} 0 0 0 ${Math.floor(x)} ${Math.floor(y)}`;
         }
         svgPath += `L${cx} ${cy} Z`;
-        console.log(svgPath);
+        //console.log(svgPath);
         return svgPath;
     }
 
@@ -116,8 +133,10 @@ class Gear extends React.Component {
     }
 
     generateRotation() {
+        let x = this.state.renderModeHorizonal? this.state.x: this.state.xVertical;
+        let y  = this.state.renderModeHorizonal? this.state.y: this.state.yVertical;
         let r = this.state.rotation;
-        return `rotate(${(r)}, ${this.state.x}, ${this.state.y})`;
+        return `rotate(${(r)}, ${x}, ${y})`;
     }
 
     setRotation() {
@@ -152,7 +171,7 @@ class Gear extends React.Component {
              }
         }
         if(this.state.textPaths.length > 0) {
-            console.log(`label=${this.state.label} index = ${index}`);
+            //console.log(`label=${this.state.label} index = ${index}`);
             let r = this.state.textPaths[index].angle;
             nextState.rotation = r;
             //console.log(`Setting rotation to ${r}`)

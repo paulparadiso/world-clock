@@ -70,33 +70,107 @@ let cities = [
 
 class Clock extends React.Component {
 
+    constructor() {
+        super();
+        console.log(`Rendering screen for a resolution of ${window.screen.width}x${window.screen.height}`)
+        this.state = {
+            renderModeHorizonal: this.shouldRenderHorizontal(),
+            cityRadius: 1842
+        }
+    }
+
+    dimensionsChanged() {
+        let nextState = {...this.state};
+        nextState.renderModeHorizonal = this.shouldRenderHorizontal();
+        this.setState(nextState);
+    }
+
+    shouldRenderHorizontal() {
+        let bHorizontal = window.innerWidth > window.innerHeight ? true: false;
+        return bHorizontal;
+    }
+
+    componentDidMount() {
+        window.addEventListener("resize", this.dimensionsChanged.bind(this));
+    }
+
     render() {
 
+        const renderModeHorizontal = this.shouldRenderHorizontal();
+
+        console.log(`renderModeHorizantal = ${renderModeHorizontal}`);
+        
         return(
+
             <div className="Clock">
-                
 
-                <Gear label="cities" texts={cities} color="#00aeef" width="1920" x="2060" y="548" radius="1842" limit="0.25">
+                <Gear label="cities" 
+                      texts={cities} 
+                      color="#00aeef" 
+                      width="1920" 
+                      x="2060" 
+                      xVertical="1030"
+                      y="548" 
+                      yVertical="298"
+                      radius="1842"
+                      radiusVertical="921"
+                      limit="0.25">
                 </Gear>
 
-                <Gear label="hours" texts={hours} color="#5ba222" width="1920" x="2060" y="540" radius="1257" limit="0.16">
+                <Gear label="hours" 
+                      texts={hours} 
+                      color="#5ba222" 
+                      width="1920" 
+                      x="2060"
+                      xVertical="1030"                      
+                      y="540" 
+                      yVertical="298"
+                      radius="1257"
+                      radiusVertical="623" 
+                      limit="0.16">
                 </Gear>
                 
-                <Gear label="minutes" texts={minutes} color="#da8315" width="1920" x="2060" y="540" radius="1042" limit="0.7">
+                <Gear label="minutes" 
+                      texts={minutes} 
+                      color="#da8315" 
+                      width="1920" 
+                      x="2060"
+                      xVertical="1030" 
+                      y="540" 
+                      yVertical="298"
+                      radius="1042" 
+                      radiusVertical="521"
+                      limit="0.7">
                 </Gear>
                 
-                
-                <Gear label="seconds" texts={seconds} color="#c1000d" width="1920" x="2060" y="540" radius="807" limit="0.75">
+                <Gear label="seconds" 
+                      texts={seconds} 
+                      color="#c1000d" 
+                      width="1920" 
+                      x="2060"
+                      xVertical="1030" 
+                      y="540" 
+                      yVertical="298"
+                      radius="807" 
+                      radiusVertical="403"
+                      limit="0.75">
                 </Gear>
 
-                 <Gear label="ampm" texts={ampm} color="#ec2543" width="1920" x="2060" y="540" radius="642" limit="0.1">
+                <Gear label="ampm" 
+                      texts={ampm} 
+                      color="#ec2543" 
+                      width="1920" 
+                      x="2060"
+                      xVertical="1030" 
+                      y="540"
+                      yVertical="298" 
+                      radius="642"
+                      radiusVertical="321" 
+                      limit="0.1">
                 </Gear>
-                */} 
             </div>
-        )
-    
+        ) 
     }
-    
 }
 
 export default Clock;
