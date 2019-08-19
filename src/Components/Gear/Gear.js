@@ -1,5 +1,6 @@
 import React from 'react';
 import './Gear.css';
+import moment from 'moment-timezone';
 
 class Gear extends React.Component {
 
@@ -23,7 +24,9 @@ class Gear extends React.Component {
             radiusVertical: parseInt(props.radiusVertical),
             renderModeHorizonal: this.shouldRenderHorizontal(),
             currentText: 0,
-            lastChange: 0
+            lastChange: 0,
+            timezones: props.timezones,
+            currentTimezone: parseInt(props.currentTimezone)
         };
         //console.log(this.state);
         window.setInterval(() => this.setRotation(), 1000);
@@ -141,25 +144,27 @@ class Gear extends React.Component {
 
     setRotation() {
         let nextState = {...this.state};
-        let date = new Date();
         let index = 0;
+        console.log(`${this.state.timezones}, ${this.state.currentTimezone}`)
+        let currentMoment = moment().tz(this.state.timezones[this.state.currentTimezone]['timezone'])
+                                    .format("h:m:s:a")
+                                    .split(":");
         if(this.state.label === 'seconds'){
-            index = date.getSeconds();
+            index = parseInt(currentMoment[2])
             nextState.currentText = index;
         }
         if(this.state.label === 'minutes'){
-            index = date.getMinutes();
+            index = parseInt(currentMoment[1]);
             nextState.currentText = index;
         }
         if(this.state.label === 'hours'){
-            index = date.getHours() - 1;
-            if( index > 11) {
-                index = index - 11;
-            }
+            index = parseInt(currentMoment[0]) - 1;
             nextState.currentText = index;
         }
         if(this.state.label === 'cities') {
-             let seconds = date.getSeconds();
+            nextState.currentText = nextState.currentTimezone;
+            /*
+            let seconds = date.getSeconds();
              if(seconds % 5 === 0){
                  if(nextState.lastChange !== seconds){
                     nextState.currentText = (nextState.currentText + 1) % this.state.texts.length;
@@ -169,6 +174,7 @@ class Gear extends React.Component {
              } else {
                  return;
              }
+             */
         }
         if(this.state.textPaths.length > 0) {
             //console.log(`label=${this.state.label} index = ${index}`);

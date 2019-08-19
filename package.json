@@ -5,10 +5,11 @@
   "dependencies": {
     "d3": "^5.9.7",
     "lodash": "^4.17.15",
+    "moment-timezone": "^0.5.26",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-scripts": "3.0.1",
-    "react-move": "^6.0.0"
+    "react-move": "^6.0.0",
+    "react-scripts": "3.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
