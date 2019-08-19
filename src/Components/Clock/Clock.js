@@ -94,6 +94,7 @@ class Clock extends React.Component {
         window.addEventListener("resize", this.dimensionsChanged.bind(this));
     }
 
+
     render() {
 
         const renderModeHorizontal = this.shouldRenderHorizontal();
@@ -102,18 +103,18 @@ class Clock extends React.Component {
         
         return(
 
-            <div className="Clock">
+            <div className={this.state.renderModeHorizonal? "Clock": "Clock-Vertical"}>
 
                 <Gear label="cities" 
                       texts={cities} 
                       color="#00aeef" 
                       width="1920" 
                       x="2060" 
-                      xVertical="1030"
-                      y="548" 
-                      yVertical="298"
-                      radius="1842"
-                      radiusVertical="921"
+                      xVertical="1345"
+                      y="540" 
+                      yVertical="760"
+                      radius="1880"
+                      radiusVertical="1300"
                       limit="0.25">
                 </Gear>
 
@@ -122,11 +123,11 @@ class Clock extends React.Component {
                       color="#5ba222" 
                       width="1920" 
                       x="2060"
-                      xVertical="1030"                      
+                      xVertical="1345"                      
                       y="540" 
-                      yVertical="298"
-                      radius="1257"
-                      radiusVertical="623" 
+                      yVertical="760"
+                      radius="1285"
+                      radiusVertical="780" 
                       limit="0.16">
                 </Gear>
                 
@@ -135,11 +136,11 @@ class Clock extends React.Component {
                       color="#da8315" 
                       width="1920" 
                       x="2060"
-                      xVertical="1030" 
+                      xVertical="1345" 
                       y="540" 
-                      yVertical="298"
+                      yVertical="760"
                       radius="1042" 
-                      radiusVertical="521"
+                      radiusVertical="685"
                       limit="0.7">
                 </Gear>
                 
@@ -148,11 +149,11 @@ class Clock extends React.Component {
                       color="#c1000d" 
                       width="1920" 
                       x="2060"
-                      xVertical="1030" 
+                      xVertical="1345" 
                       y="540" 
-                      yVertical="298"
-                      radius="807" 
-                      radiusVertical="403"
+                      yVertical="760"
+                      radius="827" 
+                      radiusVertical="550"
                       limit="0.75">
                 </Gear>
 
@@ -161,11 +162,11 @@ class Clock extends React.Component {
                       color="#ec2543" 
                       width="1920" 
                       x="2060"
-                      xVertical="1030" 
+                      xVertical="1345" 
                       y="540"
-                      yVertical="298" 
+                      yVertical="760" 
                       radius="642"
-                      radiusVertical="321" 
+                      radiusVertical="435" 
                       limit="0.1">
                 </Gear>
             </div>

@@ -183,7 +183,7 @@ class Gear extends React.Component {
 
         return (
             <div className="Gear">
-                <svg width="1920" height="1080" fill="white" stroke="black">
+                <svg width={this.state.renderModeHorizonal?"1920": "1080"} height={this.state.renderModeHorizonal?"1080": "1920"} fill="white" stroke="black">
                     <defs>
                         <radialGradient id={`${this.state.label}-gradient`} cx="50%" cy="50%" r="100%" fx="100%" fy="0%">
                             <stop offset="0%" style={{stopColor:`${this.state.color}`, stopOpacity:"0"}}/>

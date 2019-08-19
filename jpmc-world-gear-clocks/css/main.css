@@ -1,0 +1,39 @@
+@font-face {
+    font-family: amplitude-book;
+    src: url(../fonts/AmplitudeTF-Book.otf);
+}
+
+@font-face {
+    font-family: amplitude-medium;
+    src: url(../fonts/AmplitudeTF-Medium.otf);
+}
+
+@font-face {
+    font-family: amplitude-light;
+    src: url(../fonts/Amplitude-Light.otf);
+}
+
+@font-face {
+    font-family: amplitude-condensed-ultra;
+    src: url(../fonts/AmplitudeCond-Ultra.ttf);
+}
+
+@keyframes cloudAnimation {
+	from { background-position: 0 0; }
+	to { background-position: -11520px 0; }
+}
+
+@-webkit-keyframes cloudAnimation {
+	from { background-position: 0 0; }
+	to { background-position: -11520px 0; }
+}
+
+@-moz-keyframes cloudAnimation {
+	from { background-position: 0 0; }
+	to { background-position: -11520px 0; }
+}
+
+body {
+	margin: 0px;
+}
+

@@ -4,3 +4,10 @@
     border: 1px solid black;
     overflow: hidden;
 }
+
+.Clock-Vertical {
+    width: 1080px;
+    height: 1920px;
+    border: 1px solid black;
+    overflow: hidden;
+}
