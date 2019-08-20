@@ -1,6 +1,7 @@
 import React from 'react';
 import './Gear.css';
 import moment from 'moment-timezone';
+import { thisTypeAnnotation } from '@babel/types';
 
 class Gear extends React.Component {
 
@@ -20,6 +21,7 @@ class Gear extends React.Component {
             y: parseInt(props.y),
             yVertical: parseInt(props.yVertical),
             rotation: 0,
+            nextRotation: 0,
             radius: parseInt(props.radius),
             radiusVertical: parseInt(props.radiusVertical),
             renderModeHorizonal: this.shouldRenderHorizontal(),
@@ -29,7 +31,7 @@ class Gear extends React.Component {
             currentTimezone: parseInt(props.currentTimezone)
         };
         //console.log(this.state);
-        window.setInterval(() => this.setRotation(), 1000);
+        window.setInterval(() => this.setRotation(), 100);
     }
 
     dimensionsChanged() {
@@ -49,22 +51,6 @@ class Gear extends React.Component {
         this.generate();
     }
 
-    generatePath(width, height) {
-        return `M0 0 L${width} ${height/2} L0 ${height}`;
-    }
-
-    generateTextPath(key) {
-        return `M0 ${key * 20 + 20} L${this.state.width} ${this.state.height /2}`
-    }
-
-    generateTextPathID(key) {
-        return `textpath-${key}`;
-    }
-
-    getTextPathID(key) {
-        return `#textpath-${key}`;
-    }
-
     generate() {
         let cx = this.state.renderModeHorizonal? this.state.x: this.state.xVertical;
         let cy = this.state.renderModeHorizonal? this.state.y: this.state.yVertical;
@@ -77,7 +63,20 @@ class Gear extends React.Component {
         for(let i = 0; i < this.state.texts.length + 2; i++) {
             //console.log(radius);
             //let currentPosition = ((i * this.state.spacing) / max) * this.state.limit; 
-            let currentPosition = ((i * 4) / 360.0) 
+            let mult = 14;
+            if (this.state.label === "seconds"){
+                mult = 4.2;
+            }
+            if (this.state.label === "minutes"){
+                mult = 3.3;
+            }
+            if (this.state.label === "hours"){
+                mult = 6;
+            }
+            if (this.state.label === "cities"){
+                mult = 4;
+            }
+            let currentPosition = ((i * mult) / 360.0); 
             let angle = 2 * Math.PI * (0.5 - currentPosition);
             //let angle = (2 * Math.PI) / 360.0 * 4 * i
             let x = cx + (radius * Math.cos(angle));
@@ -104,37 +103,6 @@ class Gear extends React.Component {
         this.setState(nextState);
     }
 
-    generateCircle() {
-        let cx = this.state.renderModeHorizonal? this.state.x: this.state.xVertical;
-        let cy = this.state.renderModeHorizonal? this.state.y: this.state.yVertical;
-        let radius = this.state.radius;
-        let svgPath = `M${cx} ${cy}`;
-        let steps = this.state.texts.length + 1;
-        let max = steps * this.state.spacing;
-        for(let i = 0; i < this.state.texts.length; i++) {
-            let currentPosition = ((i * this.state.spacing) / max) * this.state.limit;
-            let angle = 2 * Math.PI * (0.5 - currentPosition);
-            let x = cx + (radius * Math.cos(angle));
-            let y = cy + (radius * Math.sin(angle));
-            if(i === 0){
-                svgPath += `L${Math.floor(x)} ${Math.floor(y)}`;
-            }
-            svgPath += `A${radius} ${radius} 0 0 0 ${Math.floor(x)} ${Math.floor(y)}`;
-        }
-        svgPath += `L${cx} ${cy} Z`;
-        //console.log(svgPath);
-        return svgPath;
-    }
-
-    generateLine() {
-        let cx = this.state.radius;
-        let cy = this.state.radius;
-        let radius = this.state.radius;
-        let x = cx + (radius * Math.cos(2*Math.PI * 0.5));
-        let y = cy + (radius * Math.sin(2*Math.PI * 0.5));
-        return `M${cx} ${cy} L${x} ${y}`;
-    }
-
     generateRotation() {
         let x = this.state.renderModeHorizonal? this.state.x: this.state.xVertical;
         let y  = this.state.renderModeHorizonal? this.state.y: this.state.yVertical;
@@ -145,8 +113,7 @@ class Gear extends React.Component {
     setRotation() {
         let nextState = {...this.state};
         let index = 0;
-        console.log(`${this.state.timezones}, ${this.state.currentTimezone}`)
-        let currentMoment = moment().tz(this.state.timezones[this.state.currentTimezone]['timezone'])
+        let currentMoment = moment().tz(this.props.timezones[this.props.currentTimezone]['timezone'])
                                     .format("h:m:s:a")
                                     .split(":");
         if(this.state.label === 'seconds'){
@@ -162,25 +129,20 @@ class Gear extends React.Component {
             nextState.currentText = index;
         }
         if(this.state.label === 'cities') {
-            nextState.currentText = nextState.currentTimezone;
-            /*
-            let seconds = date.getSeconds();
-             if(seconds % 5 === 0){
-                 if(nextState.lastChange !== seconds){
-                    nextState.currentText = (nextState.currentText + 1) % this.state.texts.length;
-                    index = nextState.currentText;
-                    nextState.lastChange = seconds;
-                }
-             } else {
-                 return;
-             }
-             */
+            nextState.currentText = this.props.currentTimezone;
+            index = nextState.currentText;
+        }
+        if(this.state.label === 'ampm') {
+            if(currentMoment[3] === 'am'){
+                index = 0;
+            } else {
+                index = 1;
+            }
+            nextState.currentText = index;
         }
         if(this.state.textPaths.length > 0) {
-            //console.log(`label=${this.state.label} index = ${index}`);
             let r = this.state.textPaths[index].angle;
             nextState.rotation = r;
-            //console.log(`Setting rotation to ${r}`)
             this.setState(nextState);
         }
     }
@@ -218,20 +180,28 @@ class Gear extends React.Component {
 	                </filter>
                     </defs>
                     <g transform={this.generateRotation()}>
+                        {/*
                         <path d={this.state.circlePath} filter="url(#sofGlow)" fill={`url(#${this.state.label}-gradient)`} fill-opacity="0.01" stroke="#011328"/>
+                        */}
+                        {/*
                         <path d={this.state.circlePath} fill={`url(#${this.state.label}-gradient)`} fill-opacity="0.5" stroke="#011328"/>
+                        */}
+                        <path d={this.state.circlePath} stroke="#011328"/>
                         {
                             this.state.textPaths.map((item, index) => (
                                 <React.Fragment key={`${this.state.label}-${index}`}>
                                 <defs>
                                     <path id={`${this.state.label}-textpath-${item['index']}`} d={item['path']} stroke="blue"/>
                                 </defs>
+                                {/*
                                 <text filter="url(#shadow)" className={`Clock-Text-Shadow ${this.state.currentText === index ? 'Clock-Text-Big': ''}`} fill="black">
                                     <textPath href={`#${this.state.label}-textpath-${item['index']}`}>
                                        {`${item['text']}`}
                                     </textPath>
                                 </text>
-                                <text className={`Clock-Text ${this.state.currentText === index ? 'Clock-Text-Big': ''}`} fill="black">
+                                */}
+                                <text className={`Clock-Text${this.state.renderModeHorizonal? '': '-Vertical'} 
+                                                ${this.state.currentText === index ? `Clock-Text-Big${this.state.renderModeHorizonal? '': '-Vertical'}`: ''}`} fill="black">
                                     <textPath href={`#${this.state.label}-textpath-${item['index']}`}>
                                        {`${item['text']}`}
                                     </textPath>

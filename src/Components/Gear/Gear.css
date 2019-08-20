@@ -15,12 +15,35 @@
 }
 
 .Clock-Text {
+    /*
     color: white;
+    */
+    color: black;
     font-family: amplitude;
     font-weight: bold;
     stroke: white;
+    /*
     fill: white;
+    */
+    fill: black;
     font-size: 35px;
+    opacity: 0.5;
+}
+
+.Clock-Text-Vertical {
+    /*
+    color: white;
+    */
+    color: black;
+    font-family: amplitude;
+    font-weight: bold;
+    /*
+    stroke: white;
+    fill: white;
+    */
+    stroke: black;
+    fill: black;
+    font-size: 22px;
     opacity: 0.5;
 }
 
@@ -35,6 +58,11 @@
 
 .Clock-Text-Big {
     font-size: 70px;
+    opacity: 1.0;
+}
+
+.Clock-Text-Big-Vertical {
+    font-size: 44px;
     opacity: 1.0;
 }
 

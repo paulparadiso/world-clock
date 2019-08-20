@@ -68,144 +68,144 @@ let cities = [
     "Wellington"
 ];
 
-const timezones = {
-    0: {
+const timezones = [
+    {
         "name": "San Francisco",
         "timezone": "America/Los_Angeles"
     },
-    1: {
+    {
         "name": "Houston",
         "timezone": "America/Denver"
     },
-    2: {
+    {
         "name": "Mexico City",
-        "timezone": "Mexico City",
+        "timezone": "America/Mexico_City",
     },
-    3: {
+    {
         "name": "Bogota",
         "timezone": "America/Bogota"
     },
-    4: {
+    {
         "name": "Columbus",
         "timezone": "America/New_York"
     },
-    5: {
+    {
         "name": "Lima",
         "timezone": "America/Lima"
     },
-    6: {
+    {
         "name": "New York",
         "timezone": "America/New_York"
     },
-    7: {
+    {
         "name":  "Panama City",
         "timezone":  "America/New_York"
     },
-    8: {
+    {
         "name": "Buenos Aires",
         "timezone": "America/Santiago"
     },
-    9: {
+    {
         "name": "Rio",
         "timezone": "America/Sao_Paulo"
     },
-    10: {
+    {
         "name": "London",
         "timezone": "Europe/London"
     },
-    11: {
+    {
         "name": "Frankfurt",
         "timezone": "Europe/Berlin"
     },
-    12: {
+    {
         "name": "Madrid",
         "timezone": "Europe/Madrid"
     },
-    13: {
+    {
         "name": "Milan",
         "timezone": "Europe/Berlin"
     },
-    14: {
+    {
         "name": "Oslo",
         "timezone": "Europe/Oslo"
     },
-    15: {
+    {
         "name": "Paris",
         "timezone": "Europe/Paris"
     },
-    16: {
+    {
         "name": "Zurich",
         "timezone": "Europe/Zurich"
     },
-    17: {
+    {
         "name": "Cairo",
         "timezone": "Africa/Cairo"
     },
-    18: {
+    {
         "name": "Istanbul",
         "timezone": "Africa/Johannesburg"
     },
-    19: {
+    {
         "name": "Moscow",
         "timezone": "Europe/Moscow"
     },
-    20: {
+    {
         "name": "Riyadh",
         "timezone": "Asia/Riyadh"
     },
-    21: {
+    {
         "name": "Dubai",
         "timezone": "Asia/Dubai"
     },
-    22: {
+    {
         "name": "Bengaluru",
         "timezone": "Asia/Kolkata"
     },
-    23: {
+    {
         "name": "Mumbai",
         "timezone": "Asia/Kolkata"
     },
-    24: {
+    {
         "name": "Bangkok",
         "timezone": "Asia/Bangkok" 
     },
-    25: {
+    {
         "name": "Jakarta",
         "timezone": "Asia/Jakarta"
     },
-    26: {
+    {
         "name": "Kuala Lumpur",
         "timezone": "Asia/Kuala_Lumpur"
     },
-    27: {
+    {
         "name": "Cebu",
         "timezone": "Asia/Manila"
     },
-    28: {
+    {
         "name": "Shanghai",
         "timezone": "Asia/Shanghai"
     },
-    29: {
+    {
         "name": "Singapore",
         "timezone": "Asia/Singapore"
     },
-    30: {
+    {
         "name": "Seoul",
         "timezone": "Asia/Seoul"
     },
-    31: {
+    {
         "name": "Tokyo",
         "timezone": "Asia/Tokyo"
     },
-    32: {
+    {
         "name": "Sydney",
         "timezone": "Australia/Sydney"
     },
-    33: {
+    {
         "name": "Wellington",
         "timezone": "Pacific/Auckland"
     }
-}
+]
 
 class Clock extends React.Component {
 
@@ -215,9 +215,11 @@ class Clock extends React.Component {
         this.state = {
             renderModeHorizonal: this.shouldRenderHorizontal(),
             cityRadius: 1842,
-            currentTimezone: 0
+            currentTimezone: 2,
+            lastUpdate: 0
         }
         console.log(timezones); 
+        //window.setInterval(this.nextTimezone.bind(this), 5000);
     }
 
     dimensionsChanged() {
@@ -233,8 +235,27 @@ class Clock extends React.Component {
 
     componentDidMount() {
         window.addEventListener("resize", this.dimensionsChanged.bind(this));
+        requestAnimationFrame(this.update.bind(this));
     }
 
+    nextTimezone() {
+        let nextState = {...this.state};
+        nextState.currentTimezone = (nextState.currentTimezone + 1) % timezones.length;
+        this.setState(nextState);
+        //console.log(`Setting timezone to ${nextState.currentTimezone}: ${timezones[nextState.currentTimezone]['timezone']}`);
+    }
+
+    update() {
+        let nextState = {...this.state};
+        let date = new Date();
+        let currentSeconds = date.getSeconds();
+        if ((currentSeconds % 5 == 0) && nextState.lastUpdate !== currentSeconds){
+            nextState.lastUpdate = currentSeconds;
+            this.setState(nextState);
+            this.nextTimezone();
+        }
+        requestAnimationFrame(this.update.bind(this));
+    }
 
     render() {
 
@@ -278,8 +299,8 @@ class Clock extends React.Component {
                 
                 <Gear label="minutes" 
                       texts={minutes} 
-                      timezones = {this.timezones}
-                      currentTimezone = {this.currentTimezone}
+                      timezones = {timezones}
+                      currentTimezone = {this.state.currentTimezone}
                       color="#da8315" 
                       width="1920" 
                       x="2060"
@@ -293,7 +314,7 @@ class Clock extends React.Component {
                 
                 <Gear label="seconds" 
                       texts={seconds} 
-                      timezones = {this.timezones}
+                      timezones = {timezones}
                       currentTimezone = {this.state.currentTimezone}
                       color="#c1000d" 
                       width="1920" 
