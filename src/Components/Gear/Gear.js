@@ -28,7 +28,11 @@ class Gear extends React.Component {
             currentText: 0,
             lastChange: 0,
             timezones: props.timezones,
-            currentTimezone: parseInt(props.currentTimezone)
+            currentTimezone: parseInt(props.currentTimezone),
+            vel: 0,
+            accel: 0.8,
+            dir: 1,
+            inMotion: false
         };
         //console.log(this.state);
         window.setInterval(() => this.setRotation(), 100);
@@ -112,37 +116,61 @@ class Gear extends React.Component {
 
     setRotation() {
         let nextState = {...this.state};
-        let index = 0;
+        let nextIndex = 0;
         let currentMoment = moment().tz(this.props.timezones[this.props.currentTimezone]['timezone'])
                                     .format("h:m:s:a")
                                     .split(":");
         if(this.state.label === 'seconds'){
-            index = parseInt(currentMoment[2])
-            nextState.currentText = index;
+            nextIndex = parseInt(currentMoment[2])
+            nextState.currentText = nextIndex;
         }
         if(this.state.label === 'minutes'){
-            index = parseInt(currentMoment[1]);
-            nextState.currentText = index;
+            nextIndex = parseInt(currentMoment[1]);
+            nextState.currentText = nextIndex;
         }
         if(this.state.label === 'hours'){
-            index = parseInt(currentMoment[0]) - 1;
-            nextState.currentText = index;
+            nextIndex = parseInt(currentMoment[0]) - 1;
+            nextState.currentText = nextIndex;
         }
         if(this.state.label === 'cities') {
-            nextState.currentText = this.props.currentTimezone;
-            index = nextState.currentText;
+            //nextState.currentText = this.props.currentTimezone;
+            nextIndex = this.props.currentTimezone;
+            nextState.currentText = nextIndex;
         }
         if(this.state.label === 'ampm') {
             if(currentMoment[3] === 'am'){
-                index = 0;
+                nextIndex = 0;
             } else {
-                index = 1;
+                nextIndex = 1;
             }
-            nextState.currentText = index;
+            nextState.currentText = nextIndex;
         }
-        if(this.state.textPaths.length > 0) {
-            let r = this.state.textPaths[index].angle;
-            nextState.rotation = r;
+        if(nextState.index !== nextIndex) {
+            nextState.index = nextIndex;
+            if(this.state.textPaths.length > 0) {
+                nextState.nextRotation = this.state.textPaths[nextIndex].angle;
+                nextState.inMotion = true;
+                if(nextState.nextRotation > nextState.rotation){
+                    nextState.dir = 1;
+                } else {
+                    nextState.dir = -1;
+                }
+                console.log(`Setting nextRotation - ${nextState.nextRotation} - dir = ${nextState.dir}`);
+                this.setState(nextState);
+            }
+        }
+        //if(Math.abs(nextState.rotation - nextState.nextRotation) > 1.0){
+        if((nextState.dir == -1 && nextState.rotation > nextState.nextRotation) || (nextState.dir == 1 && nextState.rotation < nextState.nextRotation)) {
+            console.log(`Moving rotation from ${nextState.rotation} to ${nextState.nextRotation}`);
+            let dist = Math.abs(nextState.rotation - nextState.nextRotation);
+            nextState.vel = nextState.vel + (nextState.accel * nextState.dir);
+            nextState.rotation = nextState.rotation + nextState.vel;
+            this.setState(nextState);
+        } else if (nextState.vel !== 0){
+            console.log('Stopping rotation');
+            nextState.rotation = nextState.nextRotation;
+            nextState.vel = 0;
+            nextState.inMotion = false;
             this.setState(nextState);
         }
     }
@@ -183,10 +211,10 @@ class Gear extends React.Component {
                         {/*
                         <path d={this.state.circlePath} filter="url(#sofGlow)" fill={`url(#${this.state.label}-gradient)`} fill-opacity="0.01" stroke="#011328"/>
                         */}
-                        {/*
                         <path d={this.state.circlePath} fill={`url(#${this.state.label}-gradient)`} fill-opacity="0.5" stroke="#011328"/>
-                        */}
+                        {/*
                         <path d={this.state.circlePath} stroke="#011328"/>
+                        */}
                         {
                             this.state.textPaths.map((item, index) => (
                                 <React.Fragment key={`${this.state.label}-${index}`}>
@@ -201,7 +229,7 @@ class Gear extends React.Component {
                                 </text>
                                 */}
                                 <text className={`Clock-Text${this.state.renderModeHorizonal? '': '-Vertical'} 
-                                                ${this.state.currentText === index ? `Clock-Text-Big${this.state.renderModeHorizonal? '': '-Vertical'}`: ''}`} fill="black">
+                                                ${(this.state.currentText === index /*&& !this.state.inMotion*/) ? `Clock-Text-Big${this.state.renderModeHorizonal? '': '-Vertical'}`: ''}`} fill="black">
                                     <textPath href={`#${this.state.label}-textpath-${item['index']}`}>
                                        {`${item['text']}`}
                                     </textPath>

@@ -18,14 +18,11 @@
     /*
     color: white;
     */
-    color: black;
+    color: white;
     font-family: amplitude;
     font-weight: bold;
     stroke: white;
-    /*
     fill: white;
-    */
-    fill: black;
     font-size: 35px;
     opacity: 0.5;
 }
@@ -34,15 +31,11 @@
     /*
     color: white;
     */
-    color: black;
+    color: white;
     font-family: amplitude;
     font-weight: bold;
-    /*
     stroke: white;
     fill: white;
-    */
-    stroke: black;
-    fill: black;
     font-size: 22px;
     opacity: 0.5;
 }
