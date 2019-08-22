@@ -30,7 +30,7 @@ class Gear extends React.Component {
             timezones: props.timezones,
             currentTimezone: parseInt(props.currentTimezone),
             vel: 0,
-            accel: 0.8,
+            accel: 2.0,
             dir: 1,
             inMotion: false
         };
@@ -175,6 +175,14 @@ class Gear extends React.Component {
         }
     }
 
+    rotationNearIndex(index) {
+        if(Math.abs(this.state.rotation - this.state.textPaths[index].angle) < 1.0){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     render() {
 
         return (
@@ -221,15 +229,13 @@ class Gear extends React.Component {
                                 <defs>
                                     <path id={`${this.state.label}-textpath-${item['index']}`} d={item['path']} stroke="blue"/>
                                 </defs>
-                                {/*
-                                <text filter="url(#shadow)" className={`Clock-Text-Shadow ${this.state.currentText === index ? 'Clock-Text-Big': ''}`} fill="black">
+                                <text filter="url(#shadow)" className={`Clock-Text-Shadow ${this.rotationNearIndex(index) ? 'Clock-Text-Big': ''}`} fill="black">
                                     <textPath href={`#${this.state.label}-textpath-${item['index']}`}>
                                        {`${item['text']}`}
                                     </textPath>
                                 </text>
-                                */}
                                 <text className={`Clock-Text${this.state.renderModeHorizonal? '': '-Vertical'} 
-                                                ${(this.state.currentText === index /*&& !this.state.inMotion*/) ? `Clock-Text-Big${this.state.renderModeHorizonal? '': '-Vertical'}`: ''}`} fill="black">
+                                                ${(this.rotationNearIndex(index) /*&& !this.state.inMotion*/) ? `Clock-Text-Big${this.state.renderModeHorizonal? '': '-Vertical'}`: ''}`} fill="black">
                                     <textPath href={`#${this.state.label}-textpath-${item['index']}`}>
                                        {`${item['text']}`}
                                     </textPath>

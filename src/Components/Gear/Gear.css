@@ -25,6 +25,7 @@
     fill: white;
     font-size: 35px;
     opacity: 0.5;
+    transition: font-size 50ms;
 }
 
 .Clock-Text-Vertical {
