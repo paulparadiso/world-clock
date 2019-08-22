@@ -3,8 +3,8 @@ import Gear from '../Gear/Gear';
 import './Clock.css';
 
 let ampm = [
-    "am",
-    "pm"
+    "AM",
+    "PM"
 ]
 
 let seconds = [

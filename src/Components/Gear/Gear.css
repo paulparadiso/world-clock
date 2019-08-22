@@ -18,11 +18,16 @@
     /*
     color: white;
     */
-    color: white;
     font-family: amplitude;
     font-weight: bold;
+    /*
+    color: white;
     stroke: white;
     fill: white;
+    */
+    color: black;
+    stroke: black;
+    fill: black;
     font-size: 35px;
     opacity: 0.5;
     transition: font-size 50ms;
@@ -32,11 +37,16 @@
     /*
     color: white;
     */
-    color: white;
     font-family: amplitude;
     font-weight: bold;
+    /*
+    color: white;
     stroke: white;
     fill: white;
+    */
+    color: black;
+    stroke: black;
+    fill: black;
     font-size: 22px;
     opacity: 0.5;
 }

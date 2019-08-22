@@ -30,12 +30,13 @@ class Gear extends React.Component {
             timezones: props.timezones,
             currentTimezone: parseInt(props.currentTimezone),
             vel: 0,
-            accel: 2.0,
+            accel: 0.5,
             dir: 1,
             inMotion: false
         };
         //console.log(this.state);
-        window.setInterval(() => this.setRotation(), 100);
+        //window.setInterval(() => this.setRotation(), 100);
+        window.requestAnimationFrame(() => this.setRotation());
     }
 
     dimensionsChanged() {
@@ -82,11 +83,12 @@ class Gear extends React.Component {
             }
             let currentPosition = ((i * mult) / 360.0); 
             let angle = 2 * Math.PI * (0.5 - currentPosition);
+            let angle2 = 2 * Math.PI * (0.5 - currentPosition);
             //let angle = (2 * Math.PI) / 360.0 * 4 * i
             let x = cx + (radius * Math.cos(angle));
             let y = cy + (radius * Math.sin(angle));
-            let tx = cx + ((radius * 0.98) * Math.cos(angle));
-            let ty = cy + ((radius * 0.98) * Math.sin(angle));
+            let tx = cx + ((radius * 0.98) * Math.cos(angle2));
+            let ty = cy + ((radius * 0.98) * Math.sin(angle2));
             if(i === 0){
                 circlePath += `L${Math.floor(x)} ${Math.floor(y)}`;
             }
@@ -149,34 +151,63 @@ class Gear extends React.Component {
             nextState.index = nextIndex;
             if(this.state.textPaths.length > 0) {
                 nextState.nextRotation = this.state.textPaths[nextIndex].angle;
-                nextState.inMotion = true;
                 if(nextState.nextRotation > nextState.rotation){
                     nextState.dir = 1;
                 } else {
                     nextState.dir = -1;
                 }
-                console.log(`Setting nextRotation - ${nextState.nextRotation} - dir = ${nextState.dir}`);
+                nextState.vel = 0.0;
+                let dist = Math.abs(nextState.rotation - nextState.nextRotation);
+                nextState.accel = 200.0 * (dist / 360.0);
+                console.log(`Setting nextRotation - ${nextState.nextRotation} - dir = ${nextState.dir} dist = ${dist}`);
                 this.setState(nextState);
             }
         }
         //if(Math.abs(nextState.rotation - nextState.nextRotation) > 1.0){
         if((nextState.dir == -1 && nextState.rotation > nextState.nextRotation) || (nextState.dir == 1 && nextState.rotation < nextState.nextRotation)) {
-            console.log(`Moving rotation from ${nextState.rotation} to ${nextState.nextRotation}`);
             let dist = Math.abs(nextState.rotation - nextState.nextRotation);
             nextState.vel = nextState.vel + (nextState.accel * nextState.dir);
             nextState.rotation = nextState.rotation + nextState.vel;
             this.setState(nextState);
         } else if (nextState.vel !== 0){
-            console.log('Stopping rotation');
-            nextState.rotation = nextState.nextRotation;
-            nextState.vel = 0;
+            //nextState.rotation = nextState.nextRotation;
+            //nextState.vel = 0;
             nextState.inMotion = false;
+            nextState.vel = 0;
             this.setState(nextState);
         }
+        if(!this.state.inMotion){
+            if (Math.abs(this.state.rotation - this.state.nextRotation) > 1.05){
+                this.setupRotation();
+            } else {
+                this.stopRotation();
+            }
+        }
+        window.requestAnimationFrame(() => this.setRotation());
+    }
+
+    setupRotation() {
+        let nextState = {...this.state};
+        nextState.inMotion = true;
+        if(nextState.nextRotation > nextState.rotation){
+            nextState.dir = 1;
+        } else {
+            nextState.dir = -1;
+        }
+        let dist = Math.abs(nextState.rotation - nextState.nextRotation);
+        nextState.accel = 200.0 * (dist / 360.0);
+        this.setState(nextState);
+    }
+
+    stopRotation() {
+        let nextState = {...this.state};
+        nextState.rotation = nextState.nextRotation;
+        nextState.vel = 0;
+        this.setState(nextState);
     }
 
     rotationNearIndex(index) {
-        if(Math.abs(this.state.rotation - this.state.textPaths[index].angle) < 1.0){
+        if(Math.abs(this.state.rotation - this.state.textPaths[index].angle) < 2.0){
             return true;
         } else {
             return false;
@@ -218,22 +249,24 @@ class Gear extends React.Component {
                     <g transform={this.generateRotation()}>
                         {/*
                         <path d={this.state.circlePath} filter="url(#sofGlow)" fill={`url(#${this.state.label}-gradient)`} fill-opacity="0.01" stroke="#011328"/>
-                        */}
+                        
                         <path d={this.state.circlePath} fill={`url(#${this.state.label}-gradient)`} fill-opacity="0.5" stroke="#011328"/>
-                        {/*
-                        <path d={this.state.circlePath} stroke="#011328"/>
                         */}
+                        <path d={this.state.circlePath} stroke="#011328"/>
+                        
                         {
                             this.state.textPaths.map((item, index) => (
                                 <React.Fragment key={`${this.state.label}-${index}`}>
                                 <defs>
                                     <path id={`${this.state.label}-textpath-${item['index']}`} d={item['path']} stroke="blue"/>
                                 </defs>
+                                {/*
                                 <text filter="url(#shadow)" className={`Clock-Text-Shadow ${this.rotationNearIndex(index) ? 'Clock-Text-Big': ''}`} fill="black">
                                     <textPath href={`#${this.state.label}-textpath-${item['index']}`}>
                                        {`${item['text']}`}
                                     </textPath>
                                 </text>
+                                */}
                                 <text className={`Clock-Text${this.state.renderModeHorizonal? '': '-Vertical'} 
                                                 ${(this.rotationNearIndex(index) /*&& !this.state.inMotion*/) ? `Clock-Text-Big${this.state.renderModeHorizonal? '': '-Vertical'}`: ''}`} fill="black">
                                     <textPath href={`#${this.state.label}-textpath-${item['index']}`}>
