@@ -32,11 +32,15 @@ class Gear extends React.Component {
             vel: 0,
             accel: 0.5,
             dir: 1,
-            inMotion: false
+            inMotion: false,
+            rotationStartTime: 0.0,
+            dist: 0.0,
+            startRotation: 0.0,
+            rotationTime: 500.0
         };
         //console.log(this.state);
         //window.setInterval(() => this.setRotation(), 100);
-        window.requestAnimationFrame(() => this.setRotation());
+        requestAnimationFrame((timestamp) => this.setRotation(timestamp));
     }
 
     dimensionsChanged() {
@@ -116,7 +120,7 @@ class Gear extends React.Component {
         return `rotate(${(r)}, ${x}, ${y})`;
     }
 
-    setRotation() {
+    setRotation(timestamp) {
         let nextState = {...this.state};
         let nextIndex = 0;
         let currentMoment = moment().tz(this.props.timezones[this.props.currentTimezone]['timezone'])
@@ -150,43 +154,60 @@ class Gear extends React.Component {
         if(nextState.index !== nextIndex) {
             nextState.index = nextIndex;
             if(this.state.textPaths.length > 0) {
-                nextState.nextRotation = this.state.textPaths[nextIndex].angle;
-                if(nextState.nextRotation > nextState.rotation){
-                    nextState.dir = 1;
-                } else {
-                    nextState.dir = -1;
-                }
-                nextState.vel = 0.0;
-                let dist = Math.abs(nextState.rotation - nextState.nextRotation);
-                nextState.accel = 200.0 * (dist / 360.0);
-                console.log(`Setting nextRotation - ${nextState.nextRotation} - dir = ${nextState.dir} dist = ${dist}`);
-                this.setState(nextState);
+                nextState.nextRotation = this.state.textPaths[nextIndex].angle;   
             }
         }
+        if(!nextState.inMotion && (nextState.rotation != nextState.nextRotation)){
+            this.setMotion(nextState, timestamp);
+        }
         //if(Math.abs(nextState.rotation - nextState.nextRotation) > 1.0){
-        if((nextState.dir == -1 && nextState.rotation > nextState.nextRotation) || (nextState.dir == 1 && nextState.rotation < nextState.nextRotation)) {
-            let dist = Math.abs(nextState.rotation - nextState.nextRotation);
-            nextState.vel = nextState.vel + (nextState.accel * nextState.dir);
-            nextState.rotation = nextState.rotation + nextState.vel;
-            this.setState(nextState);
-        } else if (nextState.vel !== 0){
+        //if((nextState.dir == -1 && nextState.rotation > nextState.nextRotation) || (nextState.dir == 1 && nextState.rotation < nextState.nextRotation)) {
+        if(nextState.inMotion){
+            let runningTime = (timestamp - nextState.rotationStartTime) / 1000.0;
+            nextState.rotation = nextState.startRotation + (nextState.dist * runningTime * nextState.dir);
+        } 
+        this.setState(nextState);
+        /*
+        else if (nextState.vel !== 0){
             //nextState.rotation = nextState.nextRotation;
             //nextState.vel = 0;
             nextState.inMotion = false;
             nextState.vel = 0;
             this.setState(nextState);
         }
-        if(!this.state.inMotion){
-            if (Math.abs(this.state.rotation - this.state.nextRotation) > 1.05){
-                this.setupRotation();
+        */
+        /*
+        if(this.state.inMotion){
+            if (Math.abs(this.state.rotation - this.state.nextRotation) < 3.0){
+                this.setupRotation(timestamp);
             } else {
                 this.stopRotation();
             }
         }
-        window.requestAnimationFrame(() => this.setRotation());
+        */
+        window.requestAnimationFrame((timestamp) => this.setRotation(timestamp));
     }
 
-    setupRotation() {
+    setMotion(nextState, timestamp) {
+        if(Math.abs(nextState.rotation - nextState.nextRotation) < 0.1){
+            nextState.rotation = nextState.nextRotation;
+            nextState.inMotion = false;
+            return;
+        }
+        if(nextState.nextRotation > nextState.rotation){
+            nextState.dir = 1.0;
+        } else {
+            nextState.dir = -1.0;
+        }
+        nextState.dist = Math.abs(nextState.rotation - nextState.nextRotation) * 1.1;
+        nextState.rotationStartTime = timestamp;
+        nextState.accel = 1.0 / nextState.dist;
+        nextState.startRotation = nextState.rotation;
+        nextState.inMotion = true;
+    }
+
+    setupRotation(timestamp) {
+        console.log('resetting rotation');
         let nextState = {...this.state};
         nextState.inMotion = true;
         if(nextState.nextRotation > nextState.rotation){
@@ -194,20 +215,23 @@ class Gear extends React.Component {
         } else {
             nextState.dir = -1;
         }
-        let dist = Math.abs(nextState.rotation - nextState.nextRotation);
-        nextState.accel = 200.0 * (dist / 360.0);
+        nextState.dist = Math.abs(nextState.rotation - nextState.nextRotation);
+        nextState.rotationStartTime = timestamp;
+        nextState.accel = 1.0 / nextState.dist;
+        nextState.startRotation = nextState.rotation;
         this.setState(nextState);
     }
 
     stopRotation() {
         let nextState = {...this.state};
         nextState.rotation = nextState.nextRotation;
+        nextState.accel = 0;
         nextState.vel = 0;
         this.setState(nextState);
     }
 
     rotationNearIndex(index) {
-        if(Math.abs(this.state.rotation - this.state.textPaths[index].angle) < 2.0){
+        if(Math.abs(this.state.rotation - this.state.textPaths[index].angle) < 0.5){
             return true;
         } else {
             return false;
