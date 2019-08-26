@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "d3": "^5.9.7",
+    "js-easing-functions": "^1.0.3",
     "lodash": "^4.17.15",
     "moment-timezone": "^0.5.26",
     "react": "^16.8.6",

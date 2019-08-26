@@ -1,6 +1,7 @@
 import React from 'react';
 import './Gear.css';
 import moment from 'moment-timezone';
+import Easer from './easing';
 import { thisTypeAnnotation } from '@babel/types';
 
 class Gear extends React.Component {
@@ -38,6 +39,7 @@ class Gear extends React.Component {
             startRotation: 0.0,
             rotationTime: 500.0
         };
+        this.easer = new Easer();
         //console.log(this.state);
         //window.setInterval(() => this.setRotation(), 100);
         requestAnimationFrame((timestamp) => this.setRotation(timestamp));
@@ -116,31 +118,61 @@ class Gear extends React.Component {
     generateRotation() {
         let x = this.state.renderModeHorizonal? this.state.x: this.state.xVertical;
         let y  = this.state.renderModeHorizonal? this.state.y: this.state.yVertical;
-        let r = this.state.rotation;
-        return `rotate(${(r)}, ${x}, ${y})`;
+        // r = this.easer.getValue;
+        return `rotate(${(this.state.rotation)}, ${x}, ${y})`;
     }
 
     setRotation(timestamp) {
         let nextState = {...this.state};
         let nextIndex = 0;
+        let easeType = 'easeOutBounce';
+        let easeTime = 2500.0;
         let currentMoment = moment().tz(this.props.timezones[this.props.currentTimezone]['timezone'])
                                     .format("h:m:s:a")
                                     .split(":");
         if(this.state.label === 'seconds'){
             nextIndex = parseInt(currentMoment[2])
+            if(nextIndex < 2){
+                nextIndex = 2;
+                easeTime = 2500.0;
+            } else {
+                easeType = 'easeInQuint';
+                easeTime = 500.0;
+            }
             nextState.currentText = nextIndex;
         }
         if(this.state.label === 'minutes'){
             nextIndex = parseInt(currentMoment[1]);
+            if(nextIndex == 0){
+                easeType = 'easeOutBounce';
+                easeTime = 2500.0;
+            } else {
+                easeType = 'easeInQuint';
+                easeTime = 500.0;
+            }
             nextState.currentText = nextIndex;
         }
         if(this.state.label === 'hours'){
             nextIndex = parseInt(currentMoment[0]) - 1;
+            if(Math.abs(nextState.index - nextIndex) > 2){
+                easeType = 'easeOutBounce';
+                easeTime = 2500.0;
+            } else {
+                easeType = 'easeInQuint';
+                easeTime = 1500.0;
+            }
             nextState.currentText = nextIndex;
         }
         if(this.state.label === 'cities') {
             //nextState.currentText = this.props.currentTimezone;
             nextIndex = this.props.currentTimezone;
+            if(nextIndex == 0){
+                easeType = 'easeOutBounce';
+                easeTime = 2300.0;
+            } else {
+                easeType = 'easeInQuint';
+                easeTime = 1200.0;
+            }
             nextState.currentText = nextIndex;
         }
         if(this.state.label === 'ampm') {
@@ -155,83 +187,20 @@ class Gear extends React.Component {
             nextState.index = nextIndex;
             if(this.state.textPaths.length > 0) {
                 nextState.nextRotation = this.state.textPaths[nextIndex].angle;   
+                this.easer.setup(timestamp, easeTime, nextState.rotation, nextState.nextRotation, easeType);
             }
         }
-        if(!nextState.inMotion && (nextState.rotation != nextState.nextRotation)){
-            this.setMotion(nextState, timestamp);
-        }
-        //if(Math.abs(nextState.rotation - nextState.nextRotation) > 1.0){
-        //if((nextState.dir == -1 && nextState.rotation > nextState.nextRotation) || (nextState.dir == 1 && nextState.rotation < nextState.nextRotation)) {
-        if(nextState.inMotion){
-            let runningTime = (timestamp - nextState.rotationStartTime) / 1000.0;
-            nextState.rotation = nextState.startRotation + (nextState.dist * runningTime * nextState.dir);
-        } 
+        let verbose = false;
+        //if(this.state.label == 'cities') {
+        //    verbose = true;
+        //}
+        nextState.rotation = this.easer.getValue(timestamp, verbose);
         this.setState(nextState);
-        /*
-        else if (nextState.vel !== 0){
-            //nextState.rotation = nextState.nextRotation;
-            //nextState.vel = 0;
-            nextState.inMotion = false;
-            nextState.vel = 0;
-            this.setState(nextState);
-        }
-        */
-        /*
-        if(this.state.inMotion){
-            if (Math.abs(this.state.rotation - this.state.nextRotation) < 3.0){
-                this.setupRotation(timestamp);
-            } else {
-                this.stopRotation();
-            }
-        }
-        */
         window.requestAnimationFrame((timestamp) => this.setRotation(timestamp));
     }
 
-    setMotion(nextState, timestamp) {
-        if(Math.abs(nextState.rotation - nextState.nextRotation) < 0.1){
-            nextState.rotation = nextState.nextRotation;
-            nextState.inMotion = false;
-            return;
-        }
-        if(nextState.nextRotation > nextState.rotation){
-            nextState.dir = 1.0;
-        } else {
-            nextState.dir = -1.0;
-        }
-        nextState.dist = Math.abs(nextState.rotation - nextState.nextRotation) * 1.1;
-        nextState.rotationStartTime = timestamp;
-        nextState.accel = 1.0 / nextState.dist;
-        nextState.startRotation = nextState.rotation;
-        nextState.inMotion = true;
-    }
-
-    setupRotation(timestamp) {
-        console.log('resetting rotation');
-        let nextState = {...this.state};
-        nextState.inMotion = true;
-        if(nextState.nextRotation > nextState.rotation){
-            nextState.dir = 1;
-        } else {
-            nextState.dir = -1;
-        }
-        nextState.dist = Math.abs(nextState.rotation - nextState.nextRotation);
-        nextState.rotationStartTime = timestamp;
-        nextState.accel = 1.0 / nextState.dist;
-        nextState.startRotation = nextState.rotation;
-        this.setState(nextState);
-    }
-
-    stopRotation() {
-        let nextState = {...this.state};
-        nextState.rotation = nextState.nextRotation;
-        nextState.accel = 0;
-        nextState.vel = 0;
-        this.setState(nextState);
-    }
-
     rotationNearIndex(index) {
-        if(Math.abs(this.state.rotation - this.state.textPaths[index].angle) < 0.5){
+        if(Math.abs(this.state.rotation - this.state.textPaths[index].angle) < 2.5){
             return true;
         } else {
             return false;
