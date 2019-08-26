@@ -132,9 +132,9 @@ class Gear extends React.Component {
                                     .split(":");
         if(this.state.label === 'seconds'){
             nextIndex = parseInt(currentMoment[2])
-            if(nextIndex < 2){
-                nextIndex = 2;
-                easeTime = 2500.0;
+            if(nextIndex < 1){
+                nextIndex = 1;
+                easeTime = 1000.0;
             } else {
                 easeType = 'easeInQuint';
                 easeTime = 500.0;
