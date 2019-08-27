@@ -213,9 +213,9 @@ class Gear extends React.Component {
             <div className="Gear">
                 <svg width={this.state.renderModeHorizonal?"1920": "1080"} height={this.state.renderModeHorizonal?"1080": "1920"} fill="white" stroke="black">
                     <defs>
-                        <radialGradient id={`${this.state.label}-gradient`} cx="50%" cy="50%" r="100%" fx="100%" fy="0%">
+                        <radialGradient id={`${this.state.label}-gradient`} cx="100%" cy="0%" r="100%" fx="100%" fy="0%">
                             <stop offset="0%" style={{stopColor:`${this.state.color}`, stopOpacity:"0"}}/>
-                            <stop offset="100%" style={{stopColor:`${this.state.color}`, stopOpacity:"1"}}/>
+                            <stop offset="100%" style={{stopColor:`${this.state.color}`, stopOpacity:"1.0"}}/>
                         </radialGradient>
                         <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
                             <feGaussianBlur stdDeviation="2 2" result="shadow"/>
@@ -236,16 +236,33 @@ class Gear extends React.Component {
 			                    <feMergeNode in="softGlow_colored"/>
 			                    <feMergeNode in="SourceGraphic"/>
 		                    </feMerge>
-
-	                </filter>
+                        </filter>
+                        <filter id="soft-glow" height="130%">
+                            <feGaussianBlur in="sourceAlpha" stdDeviation="3"/>
+                            <feOffset dx="2" dy="2" result="offsetBlur" />
+                            <feComponentTransfer>
+                                <feFuncA type="linear" slope="0.5"/>
+                            </feComponentTransfer>
+                            <feMerge>
+                                <feMergeNode />
+                                <feMergeNode in="sourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                        <filter id="glow" x="-5%" y="-5%" width="300%" height="200%">
+                            <feGaussianBlur stdDeviation="4" in="sourceGraphic" result="blurOut"/>
+                            <feOffset result="offput" in="blurOut" dx="3" dy="3" />
+                            <feFlood flood-color="#2d292a" result="offsetColor" />
+                            <feBlend in="offsetColor" in2="offput" mode="normal" />
+                        </filter>
                     </defs>
                     <g transform={this.generateRotation()}>
                         {/*
                         <path d={this.state.circlePath} filter="url(#sofGlow)" fill={`url(#${this.state.label}-gradient)`} fill-opacity="0.01" stroke="#011328"/>
-                        
-                        <path d={this.state.circlePath} fill={`url(#${this.state.label}-gradient)`} fill-opacity="0.5" stroke="#011328"/>
                         */}
-                        <path d={this.state.circlePath} stroke="#011328"/>
+                        {/*<path d={this.state.circlePath} fill="#2d292a" filter="url(#glow)"/>*/}
+                        <path class="main-shape" d={this.state.circlePath} fill={`url(#${this.state.label}-gradient)`} stroke="rgba(255,255,255,0.0)"/>
+
+                        {/*<path d={this.state.circlePath} stroke="#011328"/>*/}
                         
                         {
                             this.state.textPaths.map((item, index) => (
