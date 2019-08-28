@@ -1,6 +1,3 @@
-import { returnStatement } from "@babel/types";
-import { easeInOutElastic } from "js-easing-functions";
-
 class Easer {
 
     setup(startTime, duration, startVal, endVal, easingFunc) {
@@ -49,7 +46,7 @@ class Easer {
         const c = valDiff;
         const d = this.duration;
         let s=1.70158;var p=0;var a=c;
-        if (t==0) return b;  if ((timeDiff/2)==2) return b+c;  if (!p) p=d*(.3*1.5);
+        if (t===0) return b;  if ((timeDiff/2)===2) return b+c;  if (!p) p=d*(.3*1.5);
         if (a < Math.abs(c)) { a=c; s=p/4; }
         else s = p/(2*Math.PI) * Math.asin (c/a);
         if (t < 1) return -.5*(a*Math.pow(2,10*(t-=1)) * Math.sin( (t*d-s)*(2*Math.PI)/p )) + b;
@@ -58,8 +55,6 @@ class Easer {
 
     easeInBounce(t, verbose) {
         let valDiff = this.endVal - this.startVal;
-        let currTime = t - this.startTime;
-        let timeDiff = currTime / this.duration;
         return valDiff - this.easeOutBounce();
     }
 
@@ -67,14 +62,14 @@ class Easer {
         let valDiff = this.endVal - this.startVal;
         let currTime = t - this.startTime;
         let timeDiff = currTime / this.duration;
-        if(timeDiff < 1/2.75) {
-            return valDiff * (7.5625 * timeDiff * timeDiff) + this.startVal;
-        } else if(timeDiff < (2/2.75)) {
-            return valDiff*(7.5625*(timeDiff-=(1.5/2.75))*timeDiff + .75) + this.startVal;
+        if(timeDiff < 2/2.75) {
+            return valDiff * (1.5625 * timeDiff * timeDiff) + this.startVal;
+        /*} else if(timeDiff < (2/2.75)) {
+            return valDiff*(0.5625*(timeDiff-=(1.5/2.75)) * timeDiff + .75) + this.startVal;*/
         } else if (timeDiff < (2.5/2.75)) {
-			return valDiff*(7.5625*(timeDiff-=(2.25/2.75))*timeDiff + .9375) + this.startVal;
+			return valDiff*(7.5625*(timeDiff-=(2.25/2.75)) * timeDiff + .9375) + this.startVal;
 		} else {
-			return valDiff*(7.5625*(timeDiff-=(2.625/2.75))*timeDiff + .984375) + this.startVal;
+			return valDiff*(7.5625*(timeDiff-=(2.625/2.75)) * timeDiff + .984375) + this.startVal;
 		}
 
     }

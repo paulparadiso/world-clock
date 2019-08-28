@@ -62,12 +62,15 @@
 
 .Clock-Text-Big {
     font-size: 80px;
+    font-family: amplitude;
     opacity: 1.0;
+    font-weight: bold;
 }
 
 .Clock-Text-Big-Vertical {
     font-size: 44px;
     opacity: 1.0;
+    font-weight: bold;
 }
 
 .TextPath {
