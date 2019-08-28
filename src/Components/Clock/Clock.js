@@ -266,7 +266,6 @@ class Clock extends React.Component {
         return(
 
             <div className={this.state.renderModeHorizonal? "Clock": "Clock-Vertical"}>
-
                 <Gear label="cities" 
                       texts={cities} 
                       timezones = {timezones}
@@ -281,7 +280,7 @@ class Clock extends React.Component {
                       radiusVertical="1300"
                       limit="0.25">
                 </Gear>
-
+                
                 <Gear label="hours" 
                       texts={hours} 
                       timezones = {timezones}
@@ -296,7 +295,7 @@ class Clock extends React.Component {
                       radiusVertical="780" 
                       limit="0.16">
                 </Gear>
-                
+
                 <Gear label="minutes" 
                       texts={minutes} 
                       timezones = {timezones}
@@ -341,6 +340,11 @@ class Clock extends React.Component {
                       radiusVertical="435" 
                       limit="0.1">
                 </Gear>
+                
+                {/*
+                
+                
+                */}
             </div>
         ) 
     }

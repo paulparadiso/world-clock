@@ -213,7 +213,7 @@ class Gear extends React.Component {
             <div className="Gear">
                 <svg width={this.state.renderModeHorizonal?"1920": "1080"} height={this.state.renderModeHorizonal?"1080": "1920"} fill="white" stroke="black">
                     <defs>
-                        <radialGradient id={`${this.state.label}-gradient`} cx="100%" cy="0%" r="100%" fx="100%" fy="0%">
+                        <radialGradient id={`${this.state.label}-gradient`} cx="100%" cy="0%" r="200%">
                             <stop offset="0%" style={{stopColor:`${this.state.color}`, stopOpacity:"0"}}/>
                             <stop offset="100%" style={{stopColor:`${this.state.color}`, stopOpacity:"1.0"}}/>
                         </radialGradient>
@@ -286,6 +286,7 @@ class Gear extends React.Component {
                                 </React.Fragment>
                             ))
                         }
+                        {/*<circle cx="107%" cy="50%" r="200" fill="#fff"/>*/}
                     </g>
                 </svg>
             </div>
