@@ -73,20 +73,25 @@ class Gear extends React.Component {
             //console.log(radius);
             //let currentPosition = ((i * this.state.spacing) / max) * this.state.limit; 
             let mult = 14;
+            let add = 1.0;
             if (this.state.label === "seconds"){
                 mult = 4.2;
+                add = 0.7;
             }
             if (this.state.label === "minutes"){
                 mult = 3.3;
+                add = 0.5;
             }
             if (this.state.label === "hours"){
                 mult = 6;
+                add = 0.6
             }
             if (this.state.label === "cities"){
                 mult = 4;
+                add = 0.05;
             }
             let currentPosition = ((i * (mult + 1.0)) / 360.0);
-            let currentPosition2 = ((i * (mult + (1 + (0.08 * (mult / 14.0))))) / 360.0);
+            let currentPosition2 = ((i * (mult + 1.0) + add) / 360.0);
             let angle = 2 * Math.PI * (0.5 - currentPosition);
             let angle2 = 2 * Math.PI * (0.5 - currentPosition2);
             //let angle = (2 * Math.PI) / 360.0 * 4 * i
