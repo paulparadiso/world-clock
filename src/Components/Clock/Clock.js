@@ -8,7 +8,7 @@ let ampm = [
 ]
 
 let seconds = [
-    "00","01","02","03","04","05","06","07","08","09",
+    "01","02","03","04","05","06","07","08","09",
     "10","11","12","13","14","15","16","17","18","19",
     "20","21","22","23","24","25","26","27","28","29",
     "30","31","32","33","34","35","36","37","38","39",
@@ -211,14 +211,12 @@ class Clock extends React.Component {
 
     constructor() {
         super();
-        console.log(`Rendering screen for a resolution of ${window.screen.width}x${window.screen.height}`)
         this.state = {
             renderModeHorizonal: this.shouldRenderHorizontal(),
             cityRadius: 1842,
             currentTimezone: 2,
             lastUpdate: 0
         }
-        console.log(timezones); 
         //window.setInterval(this.nextTimezone.bind(this), 5000);
     }
 
@@ -249,7 +247,7 @@ class Clock extends React.Component {
         let nextState = {...this.state};
         let date = new Date();
         let currentSeconds = date.getSeconds();
-        if ((currentSeconds % 5 == 0) && nextState.lastUpdate !== currentSeconds){
+        if ((currentSeconds % 5 === 0) && nextState.lastUpdate !== currentSeconds){
             nextState.lastUpdate = currentSeconds;
             this.setState(nextState);
             this.nextTimezone();
@@ -258,10 +256,6 @@ class Clock extends React.Component {
     }
 
     render() {
-
-        const renderModeHorizontal = this.shouldRenderHorizontal();
-
-        console.log(`renderModeHorizantal = ${renderModeHorizontal}`);
         
         return(
 
@@ -278,9 +272,10 @@ class Clock extends React.Component {
                       yVertical="760"
                       radius="1880"
                       radiusVertical="1300"
+                      radiantX="50%"
+                      radiantY = "0%"
                       limit="0.25">
                 </Gear>
-                
                 <Gear label="hours" 
                       texts={hours} 
                       timezones = {timezones}
@@ -292,10 +287,11 @@ class Clock extends React.Component {
                       y="540" 
                       yVertical="760"
                       radius="1285"
-                      radiusVertical="780" 
+                      radiusVertical="780"
+                      radiantX="100%"
+                      radiantY = "0%"
                       limit="0.16">
                 </Gear>
-
                 <Gear label="minutes" 
                       texts={minutes} 
                       timezones = {timezones}
@@ -308,9 +304,10 @@ class Clock extends React.Component {
                       yVertical="760"
                       radius="1042" 
                       radiusVertical="685"
+                      radiantX="50%"
+                      radiantY = "50%"
                       limit="0.7">
                 </Gear>
-                
                 <Gear label="seconds" 
                       texts={seconds} 
                       timezones = {timezones}
@@ -323,9 +320,11 @@ class Clock extends React.Component {
                       yVertical="760"
                       radius="827" 
                       radiusVertical="550"
+                      radiantX="50%"
+                      radiantY = "50%"
                       limit="0.75">
                 </Gear>
-
+                
                 <Gear label="ampm" 
                       texts={ampm} 
                       timezones = {timezones}
@@ -338,13 +337,10 @@ class Clock extends React.Component {
                       yVertical="760" 
                       radius="642"
                       radiusVertical="435" 
+                      radiantX="100%"
+                      radiantY = "0%"
                       limit="0.1">
-                </Gear>
-                
-                {/*
-                
-                
-                */}
+                </Gear>    
             </div>
         ) 
     }

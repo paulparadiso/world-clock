@@ -2,7 +2,6 @@ import React from 'react';
 import './Gear.css';
 import moment from 'moment-timezone';
 import Easer from './easing';
-import { thisTypeAnnotation } from '@babel/types';
 
 class Gear extends React.Component {
 
@@ -39,6 +38,7 @@ class Gear extends React.Component {
             startRotation: 0.0,
             rotationTime: 500.0
         };
+        this.lastMoment = '';
         this.easer = new Easer();
         //console.log(this.state);
         //window.setInterval(() => this.setRotation(), 100);
@@ -68,43 +68,51 @@ class Gear extends React.Component {
         let radius = this.state.renderModeHorizonal? this.state.radius: this.state.radiusVertical;
         let circlePath = `M${cx} ${cy}`;
         let segments = [];
-        let steps = this.state.texts.length + 1;
         //let max = steps * this.state.spacing;
-        let max = steps * 4;
         for(let i = 0; i < this.state.texts.length + 2; i++) {
             //console.log(radius);
             //let currentPosition = ((i * this.state.spacing) / max) * this.state.limit; 
             let mult = 14;
+            let add = 1.0;
             if (this.state.label === "seconds"){
                 mult = 4.2;
+                add = 0.7;
             }
             if (this.state.label === "minutes"){
                 mult = 3.3;
+                add = 0.5;
             }
             if (this.state.label === "hours"){
                 mult = 6;
+                add = 0.6
             }
             if (this.state.label === "cities"){
                 mult = 4;
+                add = 0.05;
             }
-            let currentPosition = ((i * mult) / 360.0); 
+            let currentPosition = ((i * (mult + 1.0)) / 360.0);
+            let currentPosition2 = ((i * (mult + 1.0) + add) / 360.0);
             let angle = 2 * Math.PI * (0.5 - currentPosition);
-            let angle2 = 2 * Math.PI * (0.5 - currentPosition);
+            let angle2 = 2 * Math.PI * (0.5 - currentPosition2);
             //let angle = (2 * Math.PI) / 360.0 * 4 * i
             let x = cx + (radius * Math.cos(angle));
             let y = cy + (radius * Math.sin(angle));
-            let tx = cx + ((radius * 0.98) * Math.cos(angle2));
-            let ty = cy + ((radius * 0.98) * Math.sin(angle2));
+            let tx = cx + ((radius * 0.98) * Math.cos(angle));
+            let ty = cy + ((radius * 0.98) * Math.sin(angle));
+            let tx2 = cx + ((radius * 0.98) * Math.cos(angle2));
+            let ty2 = cy + ((radius * 0.98) * Math.sin(angle2));
             if(i === 0){
                 circlePath += `L${Math.floor(x)} ${Math.floor(y)}`;
             }
             circlePath += `A${radius} ${radius} 0 0 0 ${Math.floor(x)} ${Math.floor(y)}`;
             if(i > 0 && i < this.state.texts.length + 1) {
                 let segmentPath = `M${Math.floor(tx)} ${Math.floor(ty)} L${cx} ${cy}`
+                let segmentPathBig = `M${Math.floor(tx2)} ${Math.floor(ty2)} L${cx} ${cy}`
                 //console.log(segmentPath);
                 segments.push({'index': i -1, 
                                'text': this.state.texts[i -1], 
                                path: segmentPath,
+                               pathBig: segmentPathBig,
                                angle: currentPosition * 360})
             }
         }
@@ -130,25 +138,30 @@ class Gear extends React.Component {
         let currentMoment = moment().tz(this.props.timezones[this.props.currentTimezone]['timezone'])
                                     .format("h:m:s:a")
                                     .split(":");
+        if(currentMoment === this.lastMoment){
+            window.requestAnimationFrame((timestamp) => this.setRotation(timestamp));
+            return;
+        }
+        this.lastMoment = currentMoment;
         if(this.state.label === 'seconds'){
-            nextIndex = parseInt(currentMoment[2])
+            nextIndex = parseInt(currentMoment[2] - 1); 
             if(nextIndex < 1){
-                nextIndex = 1;
-                easeTime = 1000.0;
+                nextIndex = 0;
+                easeTime = 1800.0;
             } else {
-                easeType = 'easeInQuint';
-                easeTime = 500.0;
+                //easeType = 'easeInQuint';
+                easeTime = 750.0;
             }
             nextState.currentText = nextIndex;
         }
         if(this.state.label === 'minutes'){
             nextIndex = parseInt(currentMoment[1]);
-            if(nextIndex == 0){
+            if(nextIndex === 0){
                 easeType = 'easeOutBounce';
                 easeTime = 2500.0;
             } else {
-                easeType = 'easeInQuint';
-                easeTime = 500.0;
+                //easeType = 'easeInQuint';
+                easeTime = 750.0;
             }
             nextState.currentText = nextIndex;
         }
@@ -158,7 +171,7 @@ class Gear extends React.Component {
                 easeType = 'easeOutBounce';
                 easeTime = 2500.0;
             } else {
-                easeType = 'easeInQuint';
+                //easeType = 'easeInQuint';
                 easeTime = 1500.0;
             }
             nextState.currentText = nextIndex;
@@ -166,11 +179,11 @@ class Gear extends React.Component {
         if(this.state.label === 'cities') {
             //nextState.currentText = this.props.currentTimezone;
             nextIndex = this.props.currentTimezone;
-            if(nextIndex == 0){
+            if(nextIndex === 0){
                 easeType = 'easeOutBounce';
                 easeTime = 2300.0;
             } else {
-                easeType = 'easeInQuint';
+                //easeType = 'easeInQuint';
                 easeTime = 1200.0;
             }
             nextState.currentText = nextIndex;
@@ -200,7 +213,7 @@ class Gear extends React.Component {
     }
 
     rotationNearIndex(index) {
-        if(Math.abs(this.state.rotation - this.state.textPaths[index].angle) < 2.5){
+        if(Math.abs(this.state.rotation - this.state.textPaths[index].angle) < 3.5){
             return true;
         } else {
             return false;
@@ -213,46 +226,13 @@ class Gear extends React.Component {
             <div className="Gear">
                 <svg width={this.state.renderModeHorizonal?"1920": "1080"} height={this.state.renderModeHorizonal?"1080": "1920"} fill="white" stroke="black">
                     <defs>
-                        <radialGradient id={`${this.state.label}-gradient`} cx="100%" cy="0%" r="200%">
+                        <radialGradient id={`${this.state.label}-gradient`} cx={this.props.radiantX} cy={this.props.radiantY} r="100%">
                             <stop offset="0%" style={{stopColor:`${this.state.color}`, stopOpacity:"0"}}/>
                             <stop offset="100%" style={{stopColor:`${this.state.color}`, stopOpacity:"1.0"}}/>
                         </radialGradient>
                         <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
                             <feGaussianBlur stdDeviation="2 2" result="shadow"/>
                             <feOffset dx="6" dy="6"/>
-                        </filter>
-                        <filter id="sofGlow" height="100%" width="100%" x="-75%" y="-75%">
-		
-		                    <feMorphology operator="dilate" radius="4" in="SourceAlpha" result="thicken" />
-
-		                    <feGaussianBlur in="thicken" stdDeviation="10" result="blurred" />          
-
-		                    <feFlood flood-color="#2d292a" result="glowColor" />
-
-		
-		                    <feComposite in="glowColor" in2="blurred" operator="in" result="softGlow_colored" />    
-
-		                    <feMerge>
-			                    <feMergeNode in="softGlow_colored"/>
-			                    <feMergeNode in="SourceGraphic"/>
-		                    </feMerge>
-                        </filter>
-                        <filter id="soft-glow" height="130%">
-                            <feGaussianBlur in="sourceAlpha" stdDeviation="3"/>
-                            <feOffset dx="2" dy="2" result="offsetBlur" />
-                            <feComponentTransfer>
-                                <feFuncA type="linear" slope="0.5"/>
-                            </feComponentTransfer>
-                            <feMerge>
-                                <feMergeNode />
-                                <feMergeNode in="sourceGraphic"/>
-                            </feMerge>
-                        </filter>
-                        <filter id="glow" x="-5%" y="-5%" width="300%" height="200%">
-                            <feGaussianBlur stdDeviation="4" in="sourceGraphic" result="blurOut"/>
-                            <feOffset result="offput" in="blurOut" dx="3" dy="3" />
-                            <feFlood flood-color="#2d292a" result="offsetColor" />
-                            <feBlend in="offsetColor" in2="offput" mode="normal" />
                         </filter>
                     </defs>
                     <g transform={this.generateRotation()}>
@@ -268,7 +248,7 @@ class Gear extends React.Component {
                             this.state.textPaths.map((item, index) => (
                                 <React.Fragment key={`${this.state.label}-${index}`}>
                                 <defs>
-                                    <path id={`${this.state.label}-textpath-${item['index']}`} d={item['path']} stroke="blue"/>
+                                    <path id={`${this.state.label}-textpath-${item['index']}`} d={(this.rotationNearIndex(index) ? item['pathBig'] : item['path'])} stroke="blue"/>
                                 </defs>
                                 {/*
                                 <text filter="url(#shadow)" className={`Clock-Text-Shadow ${this.rotationNearIndex(index) ? 'Clock-Text-Big': ''}`} fill="black">
