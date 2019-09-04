@@ -10,8 +10,6 @@
 }
 
 .main-shape {
-    -webkit-filter: drop-shadow(-50px -50px 40px rgba(0.008, 0.824, 0.573, 0.5));
-    filter: drop-shadow(-50px -50px 40px red);
 }
 
 .main-shape-glow {
@@ -35,7 +33,6 @@
     font-size: 35px;
     opacity: 0.5;
     transition: font-size 50ms;
-    filter: drop-shadow(-10px -10px 10px rgba(0.008, 0.824, 0.573, 0.5));
 }
 
 .Clock-Text-Shadow {
@@ -55,7 +52,6 @@
     font-size: 35px;
     opacity: 0.5;
     transition: font-size 50ms;
-    filter: drop-shadow(-10px -10px 10px rgba(0.008, 0.824, 0.573, 0.5));
 }
 
 .Clock-Text-Vertical {
@@ -81,7 +77,7 @@
     font-family: amplitude;
     opacity: 1.0;
     font-weight: bold;
-    text-shadow: -10px -10px 20px rgba(0,0,0,0.5);
+    text-shadow: -10px -10px 20px rgba(0,0,0,0.3);
 }
 
 .Clock-Text-Big-Shadow {
