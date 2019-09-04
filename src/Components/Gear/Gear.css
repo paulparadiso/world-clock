@@ -2,7 +2,7 @@
 .Gear {
     position: absolute;
     width: 100%;
-    height: 100%
+    height: 100%;
 }
 
 .Gear-SVG {
@@ -10,8 +10,12 @@
 }
 
 .main-shape {
-    -webkit-filter: drop-shadow( -50px -50px 40px rgba(0.008, 0.824, 0.573, 0.5));
+    -webkit-filter: drop-shadow(-50px -50px 40px rgba(0.008, 0.824, 0.573, 0.5));
+    filter: drop-shadow(-50px -50px 40px red);
+}
 
+.main-shape-glow {
+    filter: blur(100px);
 }
 
 .Clock-Text {
@@ -31,11 +35,27 @@
     font-size: 35px;
     opacity: 0.5;
     transition: font-size 50ms;
-    filter: drop-shadow( 3px 3px 2px rgba(0.008, 0.824, 0.573));
-    -webkit-filter: drop-shadow( 3px 3px 2px rgba(0.008, 0.824, 0.573));
-    -moz-filter: drop-shadow( 3px 3px 2px rgba(0.008, 0.824, 0.573));
-    -ms-filter: drop-shadow( 3px 3px 2px rgba(0.008, 0.824, 0.573));
-    -o-filter: drop-shadow( 3px 3px 2px rgba(0.008, 0.824, 0.573));
+    filter: drop-shadow(-10px -10px 10px rgba(0.008, 0.824, 0.573, 0.5));
+}
+
+.Clock-Text-Shadow {
+    /*
+    color: white;
+    */
+    font-family: amplitude;
+    font-weight: bold;
+    color: black;
+    stroke: black;
+    fill: black;
+    /*
+    color: black;
+    stroke: black;
+    fill: black;
+    */
+    font-size: 35px;
+    opacity: 0.5;
+    transition: font-size 50ms;
+    filter: drop-shadow(-10px -10px 10px rgba(0.008, 0.824, 0.573, 0.5));
 }
 
 .Clock-Text-Vertical {
@@ -54,23 +74,17 @@
     */
     font-size: 22px;
     opacity: 0.5;
-    filter: drop-shadow( 3px 3px 2px rgba(0.008, 0.824, 0.573));
-    -webkit-filter: drop-shadow( 3px 3px 2px rgba(0.008, 0.824, 0.573));
-    -moz-filter: drop-shadow( 3px 3px 2px rgba(0.008, 0.824, 0.573));
-    -ms-filter: drop-shadow( 3px 3px 2px rgba(0.008, 0.824, 0.573));
-    -o-filter: drop-shadow( 3px 3px 2px rgba(0.008, 0.824, 0.573));
-}
-
-.Clock-Text-Shadow {
-    font-family: amplitude;
-    font-weight: bold;
-    stroke: black;
-    fill: black;
-    font-size: 35px;
-    opacity: 0.5;
 }
 
 .Clock-Text-Big {
+    font-size: 80px;
+    font-family: amplitude;
+    opacity: 1.0;
+    font-weight: bold;
+    text-shadow: -10px -10px 20px rgba(0,0,0,0.5);
+}
+
+.Clock-Text-Big-Shadow {
     font-size: 80px;
     font-family: amplitude;
     opacity: 1.0;

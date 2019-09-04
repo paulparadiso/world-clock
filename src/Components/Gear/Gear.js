@@ -230,21 +230,11 @@ class Gear extends React.Component {
                             <stop offset="0%" style={{stopColor:`${this.state.color}`, stopOpacity:"0"}}/>
                             <stop offset="100%" style={{stopColor:`${this.state.color}`, stopOpacity: `${this.props.transparencyMax}`}}/>
                         </radialGradient>
-                        <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-                            <feGaussianBlur stdDeviation="2 2" result="shadow"/>
-                            <feOffset dx="6" dy="6"/>
-                        </filter>
-                        <filter id="drop-shadow">
-                            <feGaussianBlur in="SourceAlpha" stdDeviation="2"/> 
-                            <feOffset dx="5" dy="5" result="offsetblur"/> 
-                            <feFlood flood-color="#000000"/> <feComposite in2="offsetblur" operator="in"/> 
-                            <feMerge> 
-                                <feMergeNode/> 
-                                <feMergeNode in="SourceGraphic"/> 
-                            </feMerge> 
+                        <filter id={`${this.state.label}-blur`} x="0" y="0">
+                            <feGaussianBlur in="SourceGraphic" stdDeviation="8"/>
                         </filter>
                         <clipPath id="clip-box">
-                            <rect x="0%" y="50%" width="200" height="100"/>
+                            <rect x="0%" y="0%" width="100%" height="100%"/>
                         </clipPath>
                     </defs>
                     <g transform={this.generateRotation()}>
@@ -252,7 +242,9 @@ class Gear extends React.Component {
                         <path d={this.state.circlePath} filter="url(#sofGlow)" fill={`url(#${this.state.label}-gradient)`} fill-opacity="0.01" stroke="#011328"/>
                         */}
                         {/*<path d={this.state.circlePath} fill="#2d292a" filter="url(#glow)"/>*/}
-                        <path class="main-shape" d={this.state.circlePath} fill={`url(#${this.state.label}-gradient)`} stroke="rgba(255,255,255,0.0)"/>
+                        {/*<path className="main-shape" d={this.state.circlePath} style={{filter: `url(#${this.state.label}Glow)`}} fill={`url(#${this.state.label}-gradient)`} stroke="rgba(255,255,255,0.0)"/>*/}
+                        <path className="main-shape" d={this.state.circlePath} fill={`url(#${this.state.label}-gradient)`} stroke="rgba(255,255,255,0.0)"/>
+                        <path d={this.state.circlePath} fill="rgba(0,0,0,0)" stroke="rgba(0.008, 0.824, 0.573, 0.5)" stroke-width="3" filter={`url(#${this.state.label}-blur)`} />
 
                         {/*<path d={this.state.circlePath} stroke="#011328"/>*/}
                         
@@ -271,7 +263,7 @@ class Gear extends React.Component {
                                 */}
                                 <text className={`Clock-Text${this.state.renderModeHorizonal? '': '-Vertical'} 
                                                 ${(this.rotationNearIndex(index) /*&& !this.state.inMotion*/) ? `Clock-Text-Big${this.state.renderModeHorizonal? '': '-Vertical'}`: ''}`} fill="black">
-                                    <textPath href={`#${this.state.label}-textpath-${item['index']}`} clip-path="url(#clip-box)">
+                                    <textPath href={`#${this.state.label}-textpath-${item['index']}`}>
                                        {`${item['text']}`}
                                     </textPath>
                                 </text>

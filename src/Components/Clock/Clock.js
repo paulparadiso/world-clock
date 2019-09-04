@@ -274,7 +274,7 @@ class Clock extends React.Component {
                       radiusVertical="1300"
                       radiantX="50%"
                       radiantY = "0%"
-                      transparencyMax = "0.83"
+                      transparencyMax = "0.46"
                       limit="0.25">
                 </Gear>
                 <Gear label="hours" 
@@ -291,7 +291,7 @@ class Clock extends React.Component {
                       radiusVertical="780"
                       radiantX="100%"
                       radiantY = "0%"
-                      transparencyMax = "0.75"
+                      transparencyMax = "0.8"
                       limit="0.16">
                 </Gear>
                 <Gear label="minutes" 
@@ -308,7 +308,7 @@ class Clock extends React.Component {
                       radiusVertical="685"
                       radiantX="50%"
                       radiantY = "50%"
-                      transparencyMax = "0.64"
+                      transparencyMax = "0.6"
                       limit="0.7">
                 </Gear>
                 <Gear label="seconds" 
@@ -325,7 +325,7 @@ class Clock extends React.Component {
                       radiusVertical="550"
                       radiantX="50%"
                       radiantY = "50%"
-                      transparencyMax = "0.55"
+                      transparencyMax = "0.6"
                       limit="0.75">
                 </Gear>
                 
@@ -343,7 +343,7 @@ class Clock extends React.Component {
                       radiusVertical="435" 
                       radiantX="100%"
                       radiantY = "0%"
-                      transparencyMax = "0.46"
+                      transparencyMax = "0.43"
                       limit="0.1">
                 </Gear>    
             </div>
