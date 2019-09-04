@@ -10,7 +10,8 @@
 }
 
 .main-shape {
-    filter: drop-shadow( -5px -5px 40px rgba(0.008, 0.824, 0.573, 0.5))
+    -webkit-filter: drop-shadow( -50px -50px 40px rgba(0.008, 0.824, 0.573, 0.5));
+
 }
 
 .Clock-Text {
@@ -30,7 +31,11 @@
     font-size: 35px;
     opacity: 0.5;
     transition: font-size 50ms;
-    filter: drop-shadow( 3px 3px 2px rgba(0.008, 0.824, 0.573))
+    filter: drop-shadow( 3px 3px 2px rgba(0.008, 0.824, 0.573));
+    -webkit-filter: drop-shadow( 3px 3px 2px rgba(0.008, 0.824, 0.573));
+    -moz-filter: drop-shadow( 3px 3px 2px rgba(0.008, 0.824, 0.573));
+    -ms-filter: drop-shadow( 3px 3px 2px rgba(0.008, 0.824, 0.573));
+    -o-filter: drop-shadow( 3px 3px 2px rgba(0.008, 0.824, 0.573));
 }
 
 .Clock-Text-Vertical {
@@ -49,7 +54,11 @@
     */
     font-size: 22px;
     opacity: 0.5;
-    filter: drop-shadow( 3px 3px 2px rgba(0.008, 0.824, 0.573))
+    filter: drop-shadow( 3px 3px 2px rgba(0.008, 0.824, 0.573));
+    -webkit-filter: drop-shadow( 3px 3px 2px rgba(0.008, 0.824, 0.573));
+    -moz-filter: drop-shadow( 3px 3px 2px rgba(0.008, 0.824, 0.573));
+    -ms-filter: drop-shadow( 3px 3px 2px rgba(0.008, 0.824, 0.573));
+    -o-filter: drop-shadow( 3px 3px 2px rgba(0.008, 0.824, 0.573));
 }
 
 .Clock-Text-Shadow {

@@ -228,12 +228,24 @@ class Gear extends React.Component {
                     <defs>
                         <radialGradient id={`${this.state.label}-gradient`} cx={this.props.radiantX} cy={this.props.radiantY} r="100%">
                             <stop offset="0%" style={{stopColor:`${this.state.color}`, stopOpacity:"0"}}/>
-                            <stop offset="100%" style={{stopColor:`${this.state.color}`, stopOpacity:"1.0"}}/>
+                            <stop offset="100%" style={{stopColor:`${this.state.color}`, stopOpacity: `${this.props.transparencyMax}`}}/>
                         </radialGradient>
                         <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
                             <feGaussianBlur stdDeviation="2 2" result="shadow"/>
                             <feOffset dx="6" dy="6"/>
                         </filter>
+                        <filter id="drop-shadow">
+                            <feGaussianBlur in="SourceAlpha" stdDeviation="2"/> 
+                            <feOffset dx="5" dy="5" result="offsetblur"/> 
+                            <feFlood flood-color="#000000"/> <feComposite in2="offsetblur" operator="in"/> 
+                            <feMerge> 
+                                <feMergeNode/> 
+                                <feMergeNode in="SourceGraphic"/> 
+                            </feMerge> 
+                        </filter>
+                        <clipPath id="clip-box">
+                            <rect x="0%" y="50%" width="200" height="100"/>
+                        </clipPath>
                     </defs>
                     <g transform={this.generateRotation()}>
                         {/*
@@ -259,7 +271,7 @@ class Gear extends React.Component {
                                 */}
                                 <text className={`Clock-Text${this.state.renderModeHorizonal? '': '-Vertical'} 
                                                 ${(this.rotationNearIndex(index) /*&& !this.state.inMotion*/) ? `Clock-Text-Big${this.state.renderModeHorizonal? '': '-Vertical'}`: ''}`} fill="black">
-                                    <textPath href={`#${this.state.label}-textpath-${item['index']}`}>
+                                    <textPath href={`#${this.state.label}-textpath-${item['index']}`} clip-path="url(#clip-box)">
                                        {`${item['text']}`}
                                     </textPath>
                                 </text>
