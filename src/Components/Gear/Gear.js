@@ -76,7 +76,7 @@ class Gear extends React.Component {
             let add = 1.0;
             if (this.state.label === "seconds"){
                 mult = 4.2;
-                add = 0.7;
+                add = 0.6;
             }
             if (this.state.label === "minutes"){
                 mult = 3.3;
