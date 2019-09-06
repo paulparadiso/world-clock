@@ -21,7 +21,7 @@
     color: white;
     */
     font-family: amplitude;
-    font-weight: bold;
+    font-weight: normal;
     color: white;
     stroke: white;
     fill: white;
@@ -30,7 +30,7 @@
     stroke: black;
     fill: black;
     */
-    font-size: 35px;
+    font-size: 42px;
     opacity: 0.5;
     transition: font-size 50ms;
 }
@@ -40,7 +40,7 @@
     color: white;
     */
     font-family: amplitude;
-    font-weight: bold;
+    font-weight: normal;
     color: black;
     stroke: black;
     fill: black;
@@ -49,7 +49,7 @@
     stroke: black;
     fill: black;
     */
-    font-size: 35px;
+    font-size: 42px;
     opacity: 0.5;
     transition: font-size 50ms;
 }
