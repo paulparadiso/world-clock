@@ -67,6 +67,7 @@ class Gear extends React.Component {
         let cy = this.state.renderModeHorizonal? this.state.y: this.state.yVertical;
         let radius = this.state.renderModeHorizonal? this.state.radius: this.state.radiusVertical;
         let circlePath = `M${cx} ${cy}`;
+        let circlePathShadow = `M${cx} ${cy}`;;
         let segments = [];
         //let max = steps * this.state.spacing;
         for(let i = 0; i < this.state.texts.length + 2; i++) {
@@ -75,8 +76,8 @@ class Gear extends React.Component {
             let mult = 14;
             let add = 1.0;
             if (this.state.label === "seconds"){
-                mult = 4.2;
-                add = 0.6;
+                mult = 3.6;
+                add = 1.0;
             }
             if (this.state.label === "minutes"){
                 mult = 3.3;
@@ -101,10 +102,14 @@ class Gear extends React.Component {
             let ty = cy + ((radius * 0.98) * Math.sin(angle));
             let tx2 = cx + ((radius * 0.98) * Math.cos(angle2));
             let ty2 = cy + ((radius * 0.98) * Math.sin(angle2));
+            let shadowX = cx + ((radius * 1.1) * Math.cos(angle));
+            let shadowY = cy + ((radius * 1.1) * Math.sin(angle));
             if(i === 0){
                 circlePath += `L${Math.floor(x)} ${Math.floor(y)}`;
+                circlePathShadow += `L${Math.floor(shadowX)} ${Math.floor(shadowY)}`;
             }
             circlePath += `A${radius} ${radius} 0 0 0 ${Math.floor(x)} ${Math.floor(y)}`;
+            circlePathShadow += `A${radius * 1.1} ${radius * 1.1} 0 0 0 ${Math.floor(shadowX)} ${Math.floor(shadowY)}`;
             if(i > 0 && i < this.state.texts.length + 1) {
                 let segmentPath = `M${Math.floor(tx)} ${Math.floor(ty)} L${cx} ${cy}`
                 let segmentPathBig = `M${Math.floor(tx2)} ${Math.floor(ty2)} L${cx} ${cy}`
@@ -117,24 +122,31 @@ class Gear extends React.Component {
             }
         }
         circlePath += `L${cx} ${cy} Z`;
+        circlePathShadow += `L${cx} ${cy} Z`;
         let nextState = {...this.state};
         nextState.circlePath = circlePath;
+        nextState.circlePathShadow = circlePathShadow;
         nextState.textPaths = [...segments];
         this.setState(nextState);
     }
 
-    generateRotation() {
+    generateRotation(reverse=false) {
         let x = this.state.renderModeHorizonal? this.state.x: this.state.xVertical;
         let y  = this.state.renderModeHorizonal? this.state.y: this.state.yVertical;
         // r = this.easer.getValue;
-        return `rotate(${(this.state.rotation)}, ${x}, ${y})`;
+        if(reverse)
+        {
+            return `rotate(-${(this.state.rotation)}, ${x}, ${y})`;
+        } else {
+            return `rotate(${(this.state.rotation)}, ${x}, ${y})`;
+        }
     }
 
     setRotation(timestamp) {
         let nextState = {...this.state};
         let nextIndex = 0;
         let easeType = 'easeOutBounce';
-        let easeTime = 2500.0;
+        let easeTime = 1500.0;
         let currentMoment = moment().tz(this.props.timezones[this.props.currentTimezone]['timezone'])
                                     .format("h:m:s:a")
                                     .split(":");
@@ -213,7 +225,7 @@ class Gear extends React.Component {
     }
 
     rotationNearIndex(index) {
-        if(Math.abs(this.state.rotation - this.state.textPaths[index].angle) < 3.5){
+        if(Math.abs(this.state.rotation - this.state.textPaths[index].angle) < 3.0){
             return true;
         } else {
             return false;
@@ -224,27 +236,43 @@ class Gear extends React.Component {
 
         return (
             <div className="Gear">
-                <svg width={this.state.renderModeHorizonal?"1920": "1080"} height={this.state.renderModeHorizonal?"1080": "1920"} fill="white" stroke="black">
+                <svg width={this.state.renderModeHorizonal?"1920": "1080"} height={this.state.renderModeHorizonal?"1080": "1920"} fill="white" stroke="yellow">
                     <defs>
                         <radialGradient id={`${this.state.label}-gradient`} cx={this.props.radiantX} cy={this.props.radiantY} r="100%">
                             <stop offset="0%" style={{stopColor:`${this.state.color}`, stopOpacity:"0"}}/>
                             <stop offset="100%" style={{stopColor:`${this.state.color}`, stopOpacity: `${this.props.transparencyMax}`}}/>
                         </radialGradient>
-                        <filter id={`${this.state.label}-blur`} x="0" y="0">
-                            <feGaussianBlur in="SourceGraphic" stdDeviation="8"/>
+                        <radialGradient id={`${this.state.label}-gradient2`} cx="1.07" cy="0.5">
+                            <stop offset="0%" style={{stopColor:`white`, stopOpacity:"0.0"}}/>
+                            <stop offset="100%" style={{stopColor:`red`, stopOpacity:"1.0"}}/>
+                        </radialGradient>
+                        <filter id={`${this.state.label}-blur`} x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur in="SourceGraphic" stdDeviation="10"/>
                         </filter>
-                        <clipPath id="clip-box">
-                            <rect x="0%" y="0%" width="100%" height="100%"/>
+                        <clipPath id={`${this.state.label}-clipper`}>
+                            <rect x="0" y="500" width="100%" height="100"/>
                         </clipPath>
                     </defs>
                     <g transform={this.generateRotation()}>
+                        <radialGradient id={`${this.state.label}-gradient2`} cx="100%" cy="0%">
+                            <stop offset="0%" style={{stopColor:`white`, stopOpacity:"0.0"}}/>
+                            <stop offset="100%" style={{stopColor:`red`, stopOpacity:"1.0"}}/>
+                        </radialGradient>
                         {/*
                         <path d={this.state.circlePath} filter="url(#sofGlow)" fill={`url(#${this.state.label}-gradient)`} fill-opacity="0.01" stroke="#011328"/>
                         */}
                         {/*<path d={this.state.circlePath} fill="#2d292a" filter="url(#glow)"/>*/}
                         {/*<path className="main-shape" d={this.state.circlePath} style={{filter: `url(#${this.state.label}Glow)`}} fill={`url(#${this.state.label}-gradient)`} stroke="rgba(255,255,255,0.0)"/>*/}
+                        {/*filter={`url(#${this.state.label}-blur)`}*/}
+                        {/*
+                        <path d={this.state.circlePathShadow} fill={`url(#${this.state.label}-gradient2`} stroke="rgba(255,255,255,1.0)"/>}
+                        */}
                         <path className="main-shape" d={this.state.circlePath} fill={`url(#${this.state.label}-gradient)`} stroke="rgba(255,255,255,0.0)"/>
-                        <path d={this.state.circlePath} fill="rgba(0,0,0,0)" stroke="rgba(0.008, 0.824, 0.573, 0.5)" stroke-width="3" filter={`url(#${this.state.label}-blur)`} />
+                        {/*<path d={this.state.circlePath} fill="rgba(0,0,0,0)" stroke="rgba(0.008, 0.824, 0.573, 0.2)" stroke-width="25"/>
+                        <path d={this.state.circlePath} fill="rgba(0,0,0,0)" stroke="rgba(0.008, 0.824, 0.573, 0.3)" stroke-width="20"/>
+                        <path d={this.state.circlePath} fill="rgba(0,0,0,0)" stroke="rgba(0.008, 0.824, 0.573, 0.4)" stroke-width="10"/>
+                        <path d={this.state.circlePath} fill="rgba(0,0,0,0)" stroke="rgba(0.008, 0.824, 0.573, 0.5)" stroke-width="5"/>
+                        <path d={this.state.circlePath} fill="rgba(0,0,0,0)" stroke="rgba(0.008, 0.824, 0.573, 0.5)" stroke-width="1"/>*/}
 
                         {/*<path d={this.state.circlePath} stroke="#011328"/>*/}
                         
@@ -261,12 +289,14 @@ class Gear extends React.Component {
                                     </textPath>
                                 </text>
                                 */}
+                                <g>
                                 <text className={`Clock-Text${this.state.renderModeHorizonal? '': '-Vertical'} 
                                                 ${(this.rotationNearIndex(index) /*&& !this.state.inMotion*/) ? `Clock-Text-Big${this.state.renderModeHorizonal? '': '-Vertical'}`: ''}`} fill="black">
                                     <textPath href={`#${this.state.label}-textpath-${item['index']}`}>
                                        {`${item['text']}`}
                                     </textPath>
                                 </text>
+                                </g>
                                 </React.Fragment>
                             ))
                         }

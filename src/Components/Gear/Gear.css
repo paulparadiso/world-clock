@@ -77,7 +77,7 @@
     font-family: amplitude;
     opacity: 1.0;
     font-weight: bold;
-    text-shadow: -10px -10px 20px rgba(0,0,0,0.3);
+    text-shadow: 5px 5px 5px rgba(0,0,0,0.3);
 }
 
 .Clock-Text-Big-Shadow {
