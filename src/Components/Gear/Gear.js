@@ -76,8 +76,8 @@ class Gear extends React.Component {
             let mult = 14;
             let add = 1.0;
             if (this.state.label === "seconds"){
-                mult = 3.6;
-                add = 1.0;
+                mult = 3.8;
+                add = 0.1;
             }
             if (this.state.label === "minutes"){
                 mult = 3.3;
@@ -85,7 +85,7 @@ class Gear extends React.Component {
             }
             if (this.state.label === "hours"){
                 mult = 6;
-                add = 0.6
+                add = 0.2
             }
             if (this.state.label === "cities"){
                 mult = 4;
@@ -139,6 +139,22 @@ class Gear extends React.Component {
             return `rotate(-${(this.state.rotation)}, ${x}, ${y})`;
         } else {
             return `rotate(${(this.state.rotation)}, ${x}, ${y})`;
+        }
+    }
+
+    generateRotation2(reverse=false) {
+        let x = this.state.renderModeHorizonal? this.state.x: this.state.xVertical;
+        let y  = this.state.renderModeHorizonal? this.state.y: this.state.yVertical;
+        // r = this.easer.getValue;
+        if(reverse)
+        {
+            return `rotate(-${(this.state.rotation)}, ${x}, ${y})`;
+        } else {
+            if(this.state.renderModeHorizonal){
+                return `translate(0 -483) rotate(${(this.state.rotation)}, ${x}, ${y})`;
+            } else {
+                return `translate(0 -725) rotate(${(this.state.rotation)}, ${x}, ${y})`;
+            }
         }
     }
 
@@ -258,40 +274,16 @@ class Gear extends React.Component {
                             <stop offset="0%" style={{stopColor:`white`, stopOpacity:"0.0"}}/>
                             <stop offset="100%" style={{stopColor:`red`, stopOpacity:"1.0"}}/>
                         </radialGradient>
-                        {/*
-                        <path d={this.state.circlePath} filter="url(#sofGlow)" fill={`url(#${this.state.label}-gradient)`} fill-opacity="0.01" stroke="#011328"/>
-                        */}
-                        {/*<path d={this.state.circlePath} fill="#2d292a" filter="url(#glow)"/>*/}
-                        {/*<path className="main-shape" d={this.state.circlePath} style={{filter: `url(#${this.state.label}Glow)`}} fill={`url(#${this.state.label}-gradient)`} stroke="rgba(255,255,255,0.0)"/>*/}
-                        {/*filter={`url(#${this.state.label}-blur)`}*/}
-                        {/*
-                        <path d={this.state.circlePathShadow} fill={`url(#${this.state.label}-gradient2`} stroke="rgba(255,255,255,1.0)"/>}
-                        */}
                         <path className="main-shape" d={this.state.circlePath} fill={`url(#${this.state.label}-gradient)`} stroke="rgba(255,255,255,0.0)"/>
-                        {/*<path d={this.state.circlePath} fill="rgba(0,0,0,0)" stroke="rgba(0.008, 0.824, 0.573, 0.2)" stroke-width="25"/>
-                        <path d={this.state.circlePath} fill="rgba(0,0,0,0)" stroke="rgba(0.008, 0.824, 0.573, 0.3)" stroke-width="20"/>
-                        <path d={this.state.circlePath} fill="rgba(0,0,0,0)" stroke="rgba(0.008, 0.824, 0.573, 0.4)" stroke-width="10"/>
-                        <path d={this.state.circlePath} fill="rgba(0,0,0,0)" stroke="rgba(0.008, 0.824, 0.573, 0.5)" stroke-width="5"/>
-                        <path d={this.state.circlePath} fill="rgba(0,0,0,0)" stroke="rgba(0.008, 0.824, 0.573, 0.5)" stroke-width="1"/>*/}
-
-                        {/*<path d={this.state.circlePath} stroke="#011328"/>*/}
-                        
                         {
                             this.state.textPaths.map((item, index) => (
                                 <React.Fragment key={`${this.state.label}-${index}`}>
                                 <defs>
                                     <path id={`${this.state.label}-textpath-${item['index']}`} d={(this.rotationNearIndex(index) ? item['pathBig'] : item['path'])} stroke="blue"/>
                                 </defs>
-                                {/*
-                                <text filter="url(#shadow)" className={`Clock-Text-Shadow ${this.rotationNearIndex(index) ? 'Clock-Text-Big': ''}`} fill="black">
-                                    <textPath href={`#${this.state.label}-textpath-${item['index']}`}>
-                                       {`${item['text']}`}
-                                    </textPath>
-                                </text>
-                                */}
                                 <g>
                                 <text className={`Clock-Text${this.state.renderModeHorizonal? '': '-Vertical'} 
-                                                ${(this.rotationNearIndex(index) /*&& !this.state.inMotion*/) ? `Clock-Text-Big${this.state.renderModeHorizonal? '': '-Vertical'}`: ''}`} fill="black">
+                                                ${(this.rotationNearIndex(index)) ? `Clock-Text-Gone${this.state.renderModeHorizonal? '': '-Vertical'}`: ''}`} fill="black">
                                     <textPath href={`#${this.state.label}-textpath-${item['index']}`}>
                                        {`${item['text']}`}
                                     </textPath>
@@ -300,9 +292,30 @@ class Gear extends React.Component {
                                 </React.Fragment>
                             ))
                         }
-                        {/*<circle cx="107%" cy="50%" r="200" fill="#fff"/>*/}
                     </g>
                 </svg>
+                <div className={`Window-Div${this.state.renderModeHorizonal? '': '-Vertical'} `}>
+                <svg width={this.state.renderModeHorizonal?"1920": "1080"} height={this.state.renderModeHorizonal?"1080": "1920"} fill="white" stroke="yellow">
+                    <g transform={this.generateRotation2()}>
+                        {
+                            this.state.textPaths.map((item, index) => (
+                                <React.Fragment key={`${this.state.label}-${index}`}>
+                                <defs>
+                                    <path id={`${this.state.label}-textpath-${item['index']}`} d={(this.rotationNearIndex(index) ? item['pathBig'] : item['pathBig'])} stroke="blue"/>
+                                </defs>
+                                <g>
+                                <text className={`Clock-Text-Big${this.state.renderModeHorizonal? '': '-Vertical'} `} fill="black">
+                                    <textPath href={`#${this.state.label}-textpath-${item['index']}`}>
+                                       {`${item['text']}`}
+                                    </textPath>
+                                </text>
+                                </g>
+                                </React.Fragment>
+                            ))
+                        }
+                    </g>
+                </svg>
+                </div>
             </div>
         )
     }
