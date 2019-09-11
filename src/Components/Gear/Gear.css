@@ -2,40 +2,95 @@
 .Gear {
     position: absolute;
     width: 100%;
-    height: 100%
+    height: 100%;
 }
 
 .Gear-SVG {
     fill: lime;
 }
 
-.MainShape {
-    fill: rgb(0,255,255);
-    fill-opacity: 0.25;
+.main-shape {
+}
+
+.main-shape-glow {
+    filter: blur(100px);
 }
 
 .Clock-Text {
+    /*
     color: white;
+    */
     font-family: amplitude;
-    font-weight: bold;
+    font-weight: normal;
+    color: white;
     stroke: white;
     fill: white;
-    font-size: 35px;
+    /*
+    color: black;
+    stroke: black;
+    fill: black;
+    */
+    font-size: 42px;
     opacity: 0.5;
+    transition: font-size 50ms;
 }
 
 .Clock-Text-Shadow {
+    /*
+    color: white;
+    */
     font-family: amplitude;
-    font-weight: bold;
+    font-weight: normal;
+    color: black;
     stroke: black;
     fill: black;
-    font-size: 35px;
+    /*
+    color: black;
+    stroke: black;
+    fill: black;
+    */
+    font-size: 42px;
+    opacity: 0.5;
+    transition: font-size 50ms;
+}
+
+.Clock-Text-Vertical {
+    /*
+    color: white;
+    */
+    font-family: amplitude;
+    font-weight: bold;
+    color: white;
+    stroke: white;
+    fill: white;
+    /*
+    color: black;
+    stroke: black;
+    fill: black;
+    */
+    font-size: 22px;
     opacity: 0.5;
 }
 
 .Clock-Text-Big {
-    font-size: 70px;
+    font-size: 80px;
+    font-family: amplitude;
     opacity: 1.0;
+    font-weight: bold;
+    text-shadow: 5px 5px 5px rgba(0,0,0,0.3);
+}
+
+.Clock-Text-Big-Shadow {
+    font-size: 80px;
+    font-family: amplitude;
+    opacity: 1.0;
+    font-weight: bold;
+}
+
+.Clock-Text-Big-Vertical {
+    font-size: 44px;
+    opacity: 1.0;
+    font-weight: bold;
 }
 
 .TextPath {
