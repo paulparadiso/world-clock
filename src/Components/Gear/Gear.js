@@ -8,35 +8,35 @@ class Gear extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            label: props.label,
-            texts: props.texts,
-            color: props.color,
+            //label: props.label,
+            //texts: props.texts,
+            //color: props.color,
             width: 1920,
             height: 1080,
-            spacing: 2, 
-            limit: props.limit,
+            //spacing: 2, 
+            //limit: props.limit,
             textPaths: [],
-            x: parseInt(props.x),
-            xVertical: parseInt(props.xVertical),
-            y: parseInt(props.y),
-            yVertical: parseInt(props.yVertical),
+            //x: parseInt(props.x),
+            //xVertical: parseInt(props.xVertical),
+            //y: parseInt(props.y),
+            //yVertical: parseInt(props.yVertical),
             rotation: 0,
             nextRotation: 0,
-            radius: parseInt(props.radius),
-            radiusVertical: parseInt(props.radiusVertical),
+            //radius: parseInt(props.radius),
+            //radiusVertical: parseInt(props.radiusVertical),
             renderModeHorizonal: this.shouldRenderHorizontal(),
             currentText: 0,
             lastChange: 0,
-            timezones: props.timezones,
+            //timezones: props.timezones,
             currentTimezone: parseInt(props.currentTimezone),
-            vel: 0,
-            accel: 0.5,
-            dir: 1,
-            inMotion: false,
-            rotationStartTime: 0.0,
-            dist: 0.0,
-            startRotation: 0.0,
-            rotationTime: 500.0
+            //vel: 0,
+            //accel: 0.5,
+            //dir: 1,
+            //inMotion: false,
+            //rotationStartTime: 0.0,
+            //dist: 0.0,
+            //startRotation: 0.0,
+            //rotationTime: 500.0
         };
         this.lastMoment = '';
         this.easer = new Easer();
@@ -63,31 +63,31 @@ class Gear extends React.Component {
     }
 
     generate() {
-        let cx = this.state.renderModeHorizonal? this.state.x: this.state.xVertical;
-        let cy = this.state.renderModeHorizonal? this.state.y: this.state.yVertical;
-        let radius = this.state.renderModeHorizonal? this.state.radius: this.state.radiusVertical;
+        let cx = this.state.renderModeHorizonal? parseInt(this.props.x): parseInt(this.props.xVertical);
+        let cy = this.state.renderModeHorizonal? parseInt(this.props.y): parseInt(this.props.yVertical);
+        let radius = this.state.renderModeHorizonal? parseInt(this.props.radius): parseInt(this.props.radiusVertical);
         let circlePath = `M${cx} ${cy}`;
         let circlePathShadow = `M${cx} ${cy}`;;
         let segments = [];
         //let max = steps * this.state.spacing;
-        for(let i = 0; i < this.state.texts.length + 2; i++) {
+        for(let i = 0; i < this.props.texts.length + 2; i++) {
             //console.log(radius);
             //let currentPosition = ((i * this.state.spacing) / max) * this.state.limit; 
             let mult = 14;
             let add = 1.0;
-            if (this.state.label === "seconds"){
-                mult = 3.8;
+            if (this.props.label === "seconds"){
+                mult = 4.0;
                 add = 0.1;
             }
-            if (this.state.label === "minutes"){
+            if (this.props.label === "minutes"){
                 mult = 3.3;
                 add = 0.5;
             }
-            if (this.state.label === "hours"){
+            if (this.props.label === "hours"){
                 mult = 6;
                 add = 0.2
             }
-            if (this.state.label === "cities"){
+            if (this.props.label === "cities"){
                 mult = 4;
                 add = 0.05;
             }
@@ -110,12 +110,12 @@ class Gear extends React.Component {
             }
             circlePath += `A${radius} ${radius} 0 0 0 ${Math.floor(x)} ${Math.floor(y)}`;
             circlePathShadow += `A${radius * 1.1} ${radius * 1.1} 0 0 0 ${Math.floor(shadowX)} ${Math.floor(shadowY)}`;
-            if(i > 0 && i < this.state.texts.length + 1) {
+            if(i > 0 && i < this.props.texts.length + 1) {
                 let segmentPath = `M${Math.floor(tx)} ${Math.floor(ty)} L${cx} ${cy}`
                 let segmentPathBig = `M${Math.floor(tx2)} ${Math.floor(ty2)} L${cx} ${cy}`
                 //console.log(segmentPath);
                 segments.push({'index': i -1, 
-                               'text': this.state.texts[i -1], 
+                               'text': this.props.texts[i -1], 
                                path: segmentPath,
                                pathBig: segmentPathBig,
                                angle: currentPosition * 360})
@@ -131,8 +131,8 @@ class Gear extends React.Component {
     }
 
     generateRotation(reverse=false) {
-        let x = this.state.renderModeHorizonal? this.state.x: this.state.xVertical;
-        let y  = this.state.renderModeHorizonal? this.state.y: this.state.yVertical;
+        let x = this.state.renderModeHorizonal? parseInt(this.props.x): parseInt(this.props.xVertical);
+        let y  = this.state.renderModeHorizonal? parseInt(this.props.y): parseInt(this.props.yVertical);
         // r = this.easer.getValue;
         if(reverse)
         {
@@ -143,8 +143,8 @@ class Gear extends React.Component {
     }
 
     generateRotation2(reverse=false) {
-        let x = this.state.renderModeHorizonal? this.state.x: this.state.xVertical;
-        let y  = this.state.renderModeHorizonal? this.state.y: this.state.yVertical;
+        let x = this.state.renderModeHorizonal? parseInt(this.props.x): parseInt(this.props.xVertical);
+        let y  = this.state.renderModeHorizonal? parseInt(this.props.y): parseInt(this.props.yVertical);
         // r = this.easer.getValue;
         if(reverse)
         {
@@ -171,7 +171,7 @@ class Gear extends React.Component {
             return;
         }
         this.lastMoment = currentMoment;
-        if(this.state.label === 'seconds'){
+        if(this.props.label === 'seconds'){
             nextIndex = parseInt(currentMoment[2] - 1); 
             if(nextIndex < 1){
                 nextIndex = 0;
@@ -182,7 +182,7 @@ class Gear extends React.Component {
             }
             nextState.currentText = nextIndex;
         }
-        if(this.state.label === 'minutes'){
+        if(this.props.label === 'minutes'){
             nextIndex = parseInt(currentMoment[1]);
             if(nextIndex === 0){
                 easeType = 'easeOutBounce';
@@ -193,7 +193,7 @@ class Gear extends React.Component {
             }
             nextState.currentText = nextIndex;
         }
-        if(this.state.label === 'hours'){
+        if(this.props.label === 'hours'){
             nextIndex = parseInt(currentMoment[0]) - 1;
             if(Math.abs(nextState.index - nextIndex) > 2){
                 easeType = 'easeOutBounce';
@@ -204,7 +204,7 @@ class Gear extends React.Component {
             }
             nextState.currentText = nextIndex;
         }
-        if(this.state.label === 'cities') {
+        if(this.props.label === 'cities') {
             //nextState.currentText = this.props.currentTimezone;
             nextIndex = this.props.currentTimezone;
             if(nextIndex === 0){
@@ -216,7 +216,7 @@ class Gear extends React.Component {
             }
             nextState.currentText = nextIndex;
         }
-        if(this.state.label === 'ampm') {
+        if(this.props.label === 'ampm') {
             if(currentMoment[3] === 'am'){
                 nextIndex = 0;
             } else {
@@ -232,7 +232,7 @@ class Gear extends React.Component {
             }
         }
         let verbose = false;
-        //if(this.state.label == 'cities') {
+        //if(this.props.label == 'cities') {
         //    verbose = true;
         //}
         nextState.rotation = this.easer.getValue(timestamp, verbose);
@@ -254,37 +254,37 @@ class Gear extends React.Component {
             <div className="Gear">
                 <svg width={this.state.renderModeHorizonal?"1920": "1080"} height={this.state.renderModeHorizonal?"1080": "1920"} fill="white" stroke="yellow">
                     <defs>
-                        <radialGradient id={`${this.state.label}-gradient`} cx={this.props.radiantX} cy={this.props.radiantY} r="100%">
-                            <stop offset="0%" style={{stopColor:`${this.state.color}`, stopOpacity:"0"}}/>
-                            <stop offset="100%" style={{stopColor:`${this.state.color}`, stopOpacity: `${this.props.transparencyMax}`}}/>
+                        <radialGradient id={`${this.props.label}-gradient`} cx={this.props.radiantX} cy={this.props.radiantY} r="100%">
+                            <stop offset="0%" style={{stopColor:`${this.props.color}`, stopOpacity:"0"}}/>
+                            <stop offset="100%" style={{stopColor:`${this.props.color}`, stopOpacity: `${this.props.transparencyMax}`}}/>
                         </radialGradient>
-                        <radialGradient id={`${this.state.label}-gradient2`} cx="1.07" cy="0.5">
+                        <radialGradient id={`${this.props.label}-gradient2`} cx="1.07" cy="0.5">
                             <stop offset="0%" style={{stopColor:`white`, stopOpacity:"0.0"}}/>
                             <stop offset="100%" style={{stopColor:`red`, stopOpacity:"1.0"}}/>
                         </radialGradient>
-                        <filter id={`${this.state.label}-blur`} x="-50%" y="-50%" width="200%" height="200%">
+                        <filter id={`${this.props.label}-blur`} x="-50%" y="-50%" width="200%" height="200%">
                             <feGaussianBlur in="SourceGraphic" stdDeviation="10"/>
                         </filter>
-                        <clipPath id={`${this.state.label}-clipper`}>
+                        <clipPath id={`${this.props.label}-clipper`}>
                             <rect x="0" y="500" width="100%" height="100"/>
                         </clipPath>
                     </defs>
                     <g transform={this.generateRotation()}>
-                        <radialGradient id={`${this.state.label}-gradient2`} cx="100%" cy="0%">
+                        <radialGradient id={`${this.props.label}-gradient2`} cx="100%" cy="0%">
                             <stop offset="0%" style={{stopColor:`white`, stopOpacity:"0.0"}}/>
                             <stop offset="100%" style={{stopColor:`red`, stopOpacity:"1.0"}}/>
                         </radialGradient>
-                        <path className="main-shape" d={this.state.circlePath} fill={`url(#${this.state.label}-gradient)`} stroke="rgba(255,255,255,0.0)"/>
+                        <path className="main-shape" d={this.state.circlePath} fill={`url(#${this.props.label}-gradient)`} stroke="rgba(255,255,255,0.0)"/>
                         {
                             this.state.textPaths.map((item, index) => (
-                                <React.Fragment key={`${this.state.label}-${index}`}>
+                                <React.Fragment key={`${this.props.label}-${index}`}>
                                 <defs>
-                                    <path id={`${this.state.label}-textpath-${item['index']}`} d={(this.rotationNearIndex(index) ? item['pathBig'] : item['path'])} stroke="blue"/>
+                                    <path id={`${this.props.label}-textpath-${item['index']}`} d={(this.rotationNearIndex(index) ? item['pathBig'] : item['path'])} stroke="blue"/>
                                 </defs>
                                 <g>
                                 <text className={`Clock-Text${this.state.renderModeHorizonal? '': '-Vertical'} 
                                                 ${(this.rotationNearIndex(index)) ? `Clock-Text-Gone${this.state.renderModeHorizonal? '': '-Vertical'}`: ''}`} fill="black">
-                                    <textPath href={`#${this.state.label}-textpath-${item['index']}`}>
+                                    <textPath href={`#${this.props.label}-textpath-${item['index']}`}>
                                        {`${item['text']}`}
                                     </textPath>
                                 </text>
@@ -299,13 +299,13 @@ class Gear extends React.Component {
                     <g transform={this.generateRotation2()}>
                         {
                             this.state.textPaths.map((item, index) => (
-                                <React.Fragment key={`${this.state.label}-${index}`}>
+                                <React.Fragment key={`${this.props.label}-${index}`}>
                                 <defs>
-                                    <path id={`${this.state.label}-textpath-${item['index']}`} d={(this.rotationNearIndex(index) ? item['pathBig'] : item['pathBig'])} stroke="blue"/>
+                                    <path id={`${this.props.label}-textpath-${item['index']}`} d={(this.rotationNearIndex(index) ? item['pathBig'] : item['pathBig'])} stroke="blue"/>
                                 </defs>
                                 <g>
                                 <text className={`Clock-Text-Big${this.state.renderModeHorizonal? '': '-Vertical'} `} fill="black">
-                                    <textPath href={`#${this.state.label}-textpath-${item['index']}`}>
+                                    <textPath href={`#${this.props.label}-textpath-${item['index']}`}>
                                        {`${item['text']}`}
                                     </textPath>
                                 </text>

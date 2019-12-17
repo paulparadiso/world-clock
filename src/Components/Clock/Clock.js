@@ -106,8 +106,12 @@ const timezones = [
         "timezone": "America/Santiago"
     },
     {
+        "name": "Santiago",
+        "timezone": "America/Santiago"
+    },
+    {
         "name": "Rio",
-        "timezone": "America/Sao_Paulo"
+        "timezone": "America/Santiago"
     },
     {
         "name": "London",
@@ -143,6 +147,10 @@ const timezones = [
     },
     {
         "name": "Istanbul",
+        "timezone": "Europe/Istanbul"
+    },
+    {
+        "name": "Johannesburg",
         "timezone": "Africa/Johannesburg"
     },
     {
