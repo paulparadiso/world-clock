@@ -283,7 +283,7 @@ class Gear extends React.Component {
                                 </defs>
                                 <g>
                                 <text className={`Clock-Text${this.state.renderModeHorizonal? '': '-Vertical'} 
-                                                ${(this.rotationNearIndex(index)) ? `Clock-Text-Gone${this.state.renderModeHorizonal? '': '-Vertical'}`: ''}`} fill="black">
+                                                ${(this.rotationNearIndex(index)) ? `Clock-Text-Gone${this.state.renderModeHorizonal? '': '-Vertical'}`: ''}`} >
                                     <textPath href={`#${this.props.label}-textpath-${item['index']}`}>
                                        {`${item['text']}`}
                                     </textPath>
@@ -304,7 +304,12 @@ class Gear extends React.Component {
                                     <path id={`${this.props.label}-textpath-${item['index']}`} d={(this.rotationNearIndex(index) ? item['pathBig'] : item['pathBig'])} stroke="blue"/>
                                 </defs>
                                 <g>
-                                <text className={`Clock-Text-Big${this.state.renderModeHorizonal? '': '-Vertical'} `} fill="black">
+                                <text className={`Clock-Text-Big${this.state.renderModeHorizonal? '': '-Vertical'} `}>
+                                    <textPath href={`#${this.props.label}-textpath-${item['index']}`}>
+                                       {`${item['text']}`}
+                                    </textPath>
+                                </text>
+                                <text className={`Clock-Text-Big2${this.state.renderModeHorizonal? '': '-Vertical'} `}>
                                     <textPath href={`#${this.props.label}-textpath-${item['index']}`}>
                                        {`${item['text']}`}
                                     </textPath>
