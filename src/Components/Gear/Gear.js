@@ -62,6 +62,10 @@ class Gear extends React.Component {
         this.generate();
     }
 
+    componentDidUpdate() {
+        //this.generate();
+    }
+
     generate() {
         let cx = this.state.renderModeHorizonal? parseInt(this.props.x): parseInt(this.props.xVertical);
         let cy = this.state.renderModeHorizonal? parseInt(this.props.y): parseInt(this.props.yVertical);

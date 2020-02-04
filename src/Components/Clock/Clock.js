@@ -1,6 +1,7 @@
 import React from 'react';
 import Gear from '../Gear/Gear';
 import './Clock.css';
+//import cities from '../../../Cities'
 
 let ampm = [
     "AM",
@@ -29,7 +30,7 @@ let hours = [
     "01","02","03","04","05","06","07","08","09","10","11","12"
 ];
 
-let cities = [
+let citiesO = [
     "San Francisco",
     "Houston",
     "Mexico City",
@@ -40,7 +41,7 @@ let cities = [
     "Panama City",
     "Buenos Aires",
     "Santiago",
-    "Rio",
+    "Rio de Janeiro",
     "London",
     "Frankfurt",
     "Madrid",
@@ -65,8 +66,14 @@ let cities = [
     "Seoul",
     "Tokyo",
     "Sydney",
-    "Wellington"
+    "Wellington",
+    "Chicago",
+    "Toronto",
+    "Warsaw",
+    "Hong Kong"
 ];
+
+let cities = [];
 
 const timezones = [
     {
@@ -110,7 +117,7 @@ const timezones = [
         "timezone": "America/Santiago"
     },
     {
-        "name": "Rio",
+        "name": "Rio de Janeiro",
         "timezone": "America/Santiago"
     },
     {
@@ -212,6 +219,22 @@ const timezones = [
     {
         "name": "Wellington",
         "timezone": "Pacific/Auckland"
+    },
+    {
+        "name": "Chicago",
+        "timezone": "America/Chicago"
+    },
+    {
+        "name": "Toronto",
+        "timezone": "America/Toronto"
+    },
+    {
+        "name": "Warsaw",
+        "timezone": "Europe/Warsaw"
+    },
+    {
+        "name": "Hong Kong",
+        "timezone": "Asia/Hong_Kong"
     }
 ]
 
@@ -223,7 +246,8 @@ class Clock extends React.Component {
             renderModeHorizonal: this.shouldRenderHorizontal(),
             cityRadius: 1842,
             currentTimezone: 2,
-            lastUpdate: 0
+            lastUpdate: 0,
+            cities: []
         }
         //window.setInterval(this.nextTimezone.bind(this), 5000);
     }
@@ -240,6 +264,12 @@ class Clock extends React.Component {
     }
 
     componentDidMount() {
+        fetch('Cities.json').then(r => r.json()).then(data => {
+            let nextState = {...this.state};
+            nextState.cities = data['Cities'];
+            console.log(nextState.cities);
+            this.setState(nextState);
+        });
         window.addEventListener("resize", this.dimensionsChanged.bind(this));
         requestAnimationFrame(this.update.bind(this));
     }
@@ -265,11 +295,14 @@ class Clock extends React.Component {
 
     render() {
         
+        console.log(citiesO);
+        console.log(this.state.cities[0]);
+
         return(
 
             <div className={this.state.renderModeHorizonal? "Clock": "Clock-Vertical"}>
                 <Gear label="cities" 
-                      texts={cities} 
+                      texts={this.state.cities} 
                       timezones = {timezones}
                       currentTimezone = {this.state.currentTimezone}
                       color="#00aeef" 

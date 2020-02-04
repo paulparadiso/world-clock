@@ -95,7 +95,6 @@ class Easer {
         if(this.easingFunc === 'easeOutBounce') {
             return this.easeOutBounce(t, verbose);
         }
-        console.log('Returning 0.0');
         return 0.0;
     }
 
