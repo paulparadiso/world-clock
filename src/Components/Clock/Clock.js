@@ -302,7 +302,7 @@ class Clock extends React.Component {
 
             <div className={this.state.renderModeHorizonal? "Clock": "Clock-Vertical"}>
                 <Gear label="cities" 
-                      texts={this.state.cities} 
+                      texts={citiesO} 
                       timezones = {timezones}
                       currentTimezone = {this.state.currentTimezone}
                       color="#00aeef" 
